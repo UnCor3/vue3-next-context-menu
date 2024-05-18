@@ -22,7 +22,8 @@ export function normalizeOptions(options: ExplorerOptions) {
   };
 
   // const defaultPopperOptions = await getDefaultPopperOptions();
-  const actions = [...options.actions];
+  // const actions = [...options.actions];
+  const actions = options.actions || [];
   // state.value.popperOptions = options.popperOptions || defaultPopperOptions;
   return Object.assign(defaultOptions, {
     actions,

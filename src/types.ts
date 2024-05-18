@@ -8,9 +8,12 @@ export type ActionChild = {
   disabled?: boolean;
   children?: ActionChild[] | Slotname[];
   loading?: boolean;
-  hotkey?: string;
+  enabled?: boolean;
+  hotkey?: {
+    mac?: "command" | "alt";
+    combination: string;
+  };
 };
-
 export type ActionGroup = {
   label: string;
   type: "group";
@@ -46,7 +49,7 @@ export type ExplorerOptions = {
   /**
    * The main actions to be displayed in the context menu all the time
    */
-  actions: Action[];
+  actions?: Action[];
   /**
    * Popper.js options can be adjusted here, you will also get the current config so you can write on top
    * Without any config this package uses

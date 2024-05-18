@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { handleContextMenu } from "@/behaviours/handleContextMenu";
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, onMounted, ref, watch, provide } from "vue";
 import type { ExplorerOptions } from "@/types";
 import { normalizeArea } from "@/utils";
 import Ctx from "@/CtxAnimated.vue";
@@ -16,6 +16,8 @@ const { state } = useContextMenu();
 
 state.value = normalizeOptions(props);
 
+provide("isCtxMenu", true);
+
 onMounted(async () => {
   if (!ctxMenuRef.value?.elm) return;
   //popper options need to be ready before this component is mounted
@@ -30,10 +32,11 @@ onMounted(async () => {
     e.stopPropagation();
     state.value.isOpen = false;
   });
-
-  ctxMenuRef.value.elm.addEventListener("mouseleave", () => {
-    state.value.currentAction = null;
-  });
+  //! IS THIS NEEDED?
+  //todo
+  // ctxMenuRef.value.elm.addEventListener("mouseleave", () => {
+  //   state.value.currentAction = null;
+  // });
 
   watch(
     state,
@@ -50,9 +53,10 @@ onMounted(async () => {
 </script>
 
 <template>
+  <slot name="default"></slot>
   <Ctx ref="ctxMenuRef">
     <template v-for="(_, name) in $slots" v-slot:[name]="data">
-      <slot :name="name" v-bind="data"></slot>
+      <slot v-if="name !== 'default'" :name="name" v-bind="data"></slot>
     </template>
   </Ctx>
 </template>

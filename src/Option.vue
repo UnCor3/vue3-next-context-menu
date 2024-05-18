@@ -1,5 +1,11 @@
 <template>
-  <ul ref="element" class="hover-menu">
+  <ul
+    ref="element"
+    class="hover-menu"
+    :class="{
+      'no-child': !children.length,
+    }"
+  >
     <template v-for="child in children">
       <CtxOptions
         v-if="typeof child == 'object'"

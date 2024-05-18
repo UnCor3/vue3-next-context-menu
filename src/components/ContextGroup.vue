@@ -1,27 +1,45 @@
 <template>
-  <slot />
+  <slot></slot>
 </template>
-
 <script setup lang="ts">
-import { defineProps, onMounted, provide, computed } from "vue";
-import { useContextMenu } from "../index";
+import { ActionChild } from "@/types";
+import { useContextMenu } from "@/store";
+import { onMounted, onUnmounted, provide, inject } from "vue";
 
-const { state } = useContextMenu();
-// defineProps<{
-//   label: string;
-//   init: () => void;
-//   children: string[];
+// const { props } = defineProps<{
+//   props: ActionChild;
 // }>();
-const indexOfAction = computed(() => state.value.actions.length);
-// state.value.actions.push({
-//   label: "Test1421",
-//   init: () => console.log("Test"),
-// });
 
-provide("isInsideContextGroup", true);
+const accumulatedActions = [] as ActionChild[];
+
+const handle = {
+  push: (action: ActionChild) => {
+    accumulatedActions.push(action);
+  },
+};
+provide("groupActions", handle);
 
 onMounted(() => {
-  console.log("mounted");
-  console.log(indexOfAction);
+  //if not a child of ContextMenu
+  const isCtxMenu = inject("isCtxMenu");
+  if (!isCtxMenu) return;
+
+  const { state } = useContextMenu();
+  const action = {
+    label: "Test-group",
+    type: "group",
+    children: accumulatedActions,
+  };
+  //@ts-ignore
+  state.value.actions.push(action);
+  console.log(state.value.actions);
+
+  onUnmounted(() => {
+    //@ts-ignore
+    const optionIndex = state.value.actions.indexOf(action);
+    state.value.actions = state.value.actions.filter(
+      (_, i) => i !== optionIndex
+    );
+  });
 });
 </script>

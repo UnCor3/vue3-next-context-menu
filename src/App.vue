@@ -1,131 +1,81 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import ContextMenu from "./ContextMenu.vue";
 import Test from "./Test.vue";
 import ContextOption from "@/components/ContextOption.vue";
+import ContextGroup from "./components/ContextGroup.vue";
 
 // import ContextGroup from "./components/ContextGroup.vue";
 // import ContextElm from "./components/ContextElm.vue";
 const area = document.body;
 const shouldRender = ref(true);
+
+onMounted(() => {
+  setTimeout(() => {
+    shouldRender.value = false;
+  }, 1000);
+  setTimeout(() => {
+    shouldRender.value = true;
+  }, 2000);
+});
 </script>
 
 <template>
-  <ContextMenu
-    :actions="[
-      {
-        label: 'Test',
-        type: 'action',
-        init: () => console.log('Test'),
-        children: ['Test'],
-        hotkey: 'Ctrl+T',
-      },
-      {
-        label: 'Foo',
-        type: 'action',
-        init: () => console.log('Foo'),
-        children: [
-          {
-            label: 'Bar',
-            type: 'action',
-            init: () => console.log('Bar'),
-            children: [
-              {
-                label: 'Baz',
-                type: 'action',
-                init: () => console.log('Baz'),
-                children: [
-                  {
-                    label: 'Baz',
-                    type: 'action',
-                    init: () => console.log('Baz'),
-                    children: [
-                      {
-                        label: 'Baz',
-                        type: 'action',
-                        init: () => console.log('Baz'),
-                        children: [
-                          {
-                            label: 'Baz',
-                            type: 'action',
-                            init: () => console.log('Baz'),
-                            children: [
-                              {
-                                label: 'Baz',
-                                type: 'action',
-                                init: () => console.log('Baz'),
-                                children: [
-                                  {
-                                    label: 'Baz',
-                                    type: 'action',
-                                    init: () => console.log('Baz'),
-                                  },
-                                ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
+  <ContextMenu :area="area">
+    <ContextGroup>
+      <ContextOption
+        :props="{
+          label: 'Test1111',
+          init: () => console.log('Test'),
+          hotkey: {
+            mac: 'command',
+            combination: 'Ctrl+T',
           },
-        ],
-      },
-      {
-        label: 'HELLO',
-        type: 'group',
-        children: [
-          {
-            label: 'GTest',
-            init: () => console.log('Test'),
-            type: 'action',
-            children: [
-              {
-                label: 'Test1',
-                init: () => console.log('Test'),
-                type: 'action',
-              },
-            ],
+          disabled: true,
+          enabled: true,
+          children: [
+            {
+              label: 'Test1111',
+              type: 'action',
+              init: () => console.log('Test'),
+            },
+          ],
+        }"
+      />
+
+      <ContextOption
+        :props="{
+          label: 'Testaaaa',
+          init: () => console.log('Test'),
+          hotkey: {
+            mac: 'alt',
+            combination: 'Alt+T',
           },
-          {
-            label: 'GTest2',
-            type: 'action',
-            init: () => console.log('Test1'),
-            children: [
-              {
-                label: 'Test3',
-                init: () => console.log('Test'),
-                type: 'action',
-                children: [
-                  {
-                    label: 'Test4',
-                    init: () => console.log('Test'),
-                    type: 'action',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      'Test1',
-    ]"
-    :area="area"
-  >
-    <template #Test="props">
-      <Test :contextMenuProps="props" />
-    </template>
+          children: [
+            {
+              label: 'Testaaaa',
+              type: 'action',
+              init: () => console.log('Test'),
+            },
+          ],
+        }"
+      />
+
+      <ContextOption :props="'Test'" />
+    </ContextGroup>
+    <ContextOption :props="'Test1'" />
+
     <template #Test1>
       <div>gavuraaa</div>
     </template>
+    <template #Test="props">
+      <Test :contextMenuProps="props" />
+    </template>
   </ContextMenu>
-  <ContextOption
+  <!-- <ContextOption
+    v-if="shouldRender"
     :props="{
       label: 'Test1111',
-      type: 'action',
       init: () => console.log('Test'),
       hotkey: 'Ctrl+T',
       children: [
@@ -137,7 +87,7 @@ const shouldRender = ref(true);
         },
       ],
     }"
-  />
+  /> -->
   <button
     @click="
       () => {

@@ -13,7 +13,8 @@
       <div style="position: relative">
         <CtxOptions
           v-for="action in state.actions"
-          :props="typeof action === 'object' ? { ...action } : action"
+          :key="action"
+          :props="action"
           :isOpen="state.isOpen"
           :root="true"
         >
@@ -83,6 +84,10 @@ defineExpose({
   background-color: black;
   padding: 0.5rem;
   border-radius: 0.5rem;
+}
+
+.hover-menu .no-child {
+  display: none !important;
 }
 </style>
 

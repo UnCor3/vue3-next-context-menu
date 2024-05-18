@@ -1,10 +1,12 @@
 <template>
+  <!-- Action -->
   <li
     v-if="typeof props === 'object' && props.type == 'action'"
     class="context-option"
     :class="{
       clickable: !props.children,
       root,
+      disabled: props.disabled,
     }"
     ref="liRef"
     liRef="true"
@@ -17,10 +19,15 @@
         typeof props === 'object' && props.type === 'action' && props.hotkey
       "
       class="hotkey"
-      >{{ props.hotkey }}</span
     >
+      <template v-if="props.hotkey.mac">
+        <Command v-if="props.hotkey.mac === 'command'" />
+        <Alt v-if="props.hotkey.mac === 'alt'" />
+      </template>
+      {{ props.hotkey.combination }}</span
+    >
+    <span class="checked" v-if="props.enabled"> <Tick /> </span>
     <span class="sign" v-if="props.children"><ArrowRight /></span>
-
     <Teleport to="body" v-if="root">
       <Option
         :children="props.children!"
@@ -57,15 +64,17 @@
       </template>
     </Option>
   </li>
+  <!-- Group -->
   <template v-else-if="typeof props === 'object' && props.type == 'group'">
     <li class="group">
-      <CtxOptions
-        v-for="option in props.children"
-        :props="option"
-        :root="root"
-      />
+      <CtxOptions v-for="option in props.children" :props="option" :root="root">
+        <template v-for="(_, name) in $slots" v-slot:[name]="data">
+          <slot :name="name" v-bind="data"></slot>
+        </template>
+      </CtxOptions>
     </li>
   </template>
+  <!-- Slot -->
   <template v-if="typeof props === 'string'">
     <li ref="liRef" class="context-option">
       <span class="label">
@@ -81,7 +90,7 @@
               })
           "
         >
-          <slot :name="props"></slot>
+          <slot :name="props" />
         </ul>
       </Teleport>
     </li>
@@ -95,6 +104,9 @@ import { useContextMenu } from "@/store";
 import type { Action } from "./types";
 import Option from "./Option.vue";
 import ArrowRight from "./icons/ArrowRight.vue";
+import Command from "@/icons/Command.vue";
+import Alt from "@/icons/Alt.vue";
+import Tick from "@/icons/Tick.vue";
 
 const { state } = useContextMenu();
 const liRef = ref<HTMLElement>();
@@ -111,16 +123,31 @@ type OptionsProps = {
 
 const { props, root } = defineProps<OptionsProps>();
 onMounted(async () => {
+  // console.log(props);
   if (!liRef.value || !ulRef.value?.element) return;
-  watch(
-    () => state.value.currentAction,
-    () => {
-      if (shouldShow.value) {
-        ulRef.value!.element.removeAttribute("data-show");
-        shouldShow.value = false;
+  root &&
+    watch(
+      () => state.value.currentAction,
+      () => {
+        if (shouldShow.value) {
+          ulRef.value!.element.removeAttribute("data-show");
+          shouldShow.value = false;
+        }
       }
-    }
-  );
+    );
+
+  root &&
+    watch(
+      () => state.value.isOpen,
+      (isOpen) => {
+        // console.log(isOpen);
+        if (!isOpen && shouldShow.value) {
+          ulRef.value!.element.removeAttribute("data-show");
+          shouldShow.value = false;
+        }
+      }
+    );
+
   //   watch(
   //   () => state.value.currentAction,
   //   (action,prevAction) => {
@@ -155,12 +182,16 @@ onMounted(async () => {
     state.value.popperOptions!
   );
   function show() {
+    if (root) {
+      state.value.currentAction = props;
+    }
     ulRef.value!.element.setAttribute("data-show", "true");
     popperInstance.update();
     shouldShow.value = true;
+    // console.log("root", root, { label: props.label });
     if (!root) return;
     if (state.value.currentAction === props) return;
-    state.value.currentAction = props;
+    // state.value.currentAction = props;
   }
 
   function hide() {
@@ -200,6 +231,29 @@ onMounted(async () => {
   display: none;
 }
 
+.context-option .hotkey {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  background-color: white;
+  border-radius: 0.25rem;
+  color: rgba(0, 0, 0, 0.685);
+  padding: 0.2rem;
+  font-size: 0.85rem;
+}
+
+.context-option .checked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.3rem;
+}
+
+.context-option.disabled {
+  opacity: 0.5;
+}
+
 .context-option::after {
   content: "";
   position: absolute;
@@ -207,7 +261,7 @@ onMounted(async () => {
   left: 100%;
   width: 0.5rem;
   height: 100%; /* Adjust this to the size of the gap */
-  background: red;
+  background: transparent;
 }
 .context-option::before {
   content: "";
@@ -217,7 +271,7 @@ onMounted(async () => {
   width: 0.5rem;
   height: 100%; /* Adjust this to the size of the gap */
   transform: translateX(-100%);
-  background: red;
+  background: transparent;
 }
 
 .hover-menu[data-show] {
@@ -226,5 +280,12 @@ onMounted(async () => {
   opacity: 1;
   z-index: 1;
   position: absolute;
+}
+
+.group {
+  padding: 0.2rem 0;
+  margin: 0.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.555);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.555);
 }
 </style>
