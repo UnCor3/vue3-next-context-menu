@@ -54,10 +54,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <slot name="default"></slot>
   <Ctx ref="ctxMenuRef">
-    <template v-for="(_, name) in $slots" v-slot:[name]="data">
-      <slot v-if="name !== 'default'" :name="name" v-bind="data"></slot>
-    </template>
+    <slot />
+    <!-- <template v-for="(_, name) in $slots" v-slot:[name]="data">
+      <slot :name="name" v-bind="data"></slot>
+    </template> -->
   </Ctx>
 </template>

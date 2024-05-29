@@ -12,17 +12,7 @@
       }"
     >
       <div style="position: relative">
-        <CtxOptions
-          v-for="action in state.actions"
-          :key="action.label"
-          :props="action"
-          :root="true"
-        >
-          <!-- :slot="action.slot" -->
-          <template v-for="(_, name) in $slots" v-slot:[name]="data">
-            <slot :name="name" v-bind="data"></slot>
-          </template>
-        </CtxOptions>
+        <slot />
       </div>
     </ul>
   </div>
@@ -30,7 +20,7 @@
 <script setup lang="ts">
 import CtxOptions from "@/CtxOptions.vue";
 import { useContextMenu } from "@/store";
-import { defineExpose, ref } from "vue";
+import { ref } from "vue";
 
 const { state } = useContextMenu();
 

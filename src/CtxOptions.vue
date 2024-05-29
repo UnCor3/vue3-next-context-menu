@@ -1,22 +1,22 @@
 <template>
   <!-- Action -->
   <li
-    v-if="props.type == 'action'"
+    v-if="props.type === 'action'"
     class="context-option"
     :class="neededClasses"
     ref="liRef"
     :data-label="props.label"
   >
     <OptionAttrs :props="props" />
-    <Teleport v-if="root" to=".vue-3-context-hover-menus">
-      <ul
-        ref="ulRef"
-        class="hover-menu"
-        :class="{
-          'no-child': !props.children,
-        }"
-      >
-        <template v-for="child in props.children">
+    <ul
+      ref="ulRef"
+      class="hover-menu"
+      :class="{
+        'no-child': !props.children,
+      }"
+    >
+      <slot :teleportRef="'aaa'" />
+      <!-- <template v-for="child in props.children">
           <CtxOptions :props="child" :root="false">
             <template
               v-for="(
@@ -29,71 +29,12 @@
               <slot :name="name" v-bind="data" />
             </template>
           </CtxOptions>
-        </template>
-      </ul>
-    </Teleport>
-    <template v-else>
-      <ul
-        ref="ulRef"
-        class="hover-menu"
-        :class="{
-          'no-child': !props.children,
-        }"
-      >
-        <template v-for="child in props.children">
-          <CtxOptions :props="child" :root="false">
-            <template
-              v-for="(
-                _, //@ts-ignore
-                name
-              ) in $slots"
-              v-slot:[name]="//@ts-ignore
-              data"
-            >
-              <slot :name="name" v-bind="data" />
-            </template>
-          </CtxOptions>
-        </template>
-      </ul>
-    </template>
+        </template> -->
+    </ul>
   </li>
   <!-- Group -->
-  <template v-else-if="props.type == 'group'">
-    <li class="group" :data-label="props.label">
-      <CtxOptions v-for="option in props.children" :props="option" :root="true">
-        <template
-          v-for="(_, name) in $slots"
-          v-slot:[name]="//@ts-ignore
-          data"
-        >
-          <slot :name="name" v-bind="data" />
-        </template>
-      </CtxOptions>
-    </li>
-  </template>
+
   <!-- Slot -->
-  <template v-else-if="props.type === 'slot'">
-    <li
-      ref="liRef"
-      class="context-option"
-      :class="neededClasses"
-      :data-label="props.label"
-    >
-      <OptionAttrs :props="props" v-if="!props.parentSlot" />
-      <slot v-else :name="props.parentSlot" />
-      <Teleport to=".vue-3-context-hover-menus">
-        <ul
-          class="hover-menu"
-          :class="{
-            'no-child': !props.childSlot,
-          }"
-          ref="ulRef"
-        >
-          <slot v-if="props.childSlot" :name="props.childSlot" />
-        </ul>
-      </Teleport>
-    </li>
-  </template>
 </template>
 
 <script setup lang="ts">
@@ -122,7 +63,7 @@ type OptionsProps = {
 };
 
 const { props, root } = defineProps<OptionsProps>();
-
+console.log(props.type);
 // const popperOptions = {
 //   modifiers: [offsetModifier, preventOverflow, flip],
 //   strategy: root ? "absolute" : "relative",
@@ -139,6 +80,7 @@ const neededClasses = computed(() => ({
 onMounted(() => {
   //todo is this needed ?
   if (!liRef.value || !ulRef.value) return;
+  console.log(liRef.value, ulRef.value);
   ulRef.value!.style.display = "none";
 
   root &&
@@ -166,12 +108,14 @@ onMounted(() => {
     );
 
   if (typeof props === "object" && props.type == "group") return;
+  console.log(props);
   const popperInstance = createPopper(
     liRef.value,
     ulRef.value!,
     state.value.popperOptions as any
   );
   function show() {
+    console.log("hit show");
     ulRef.value!.style.display = "block";
     // if (props.type === "slot" && !props.childSlot) {
     //   shouldShow.value = true;

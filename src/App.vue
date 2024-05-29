@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import ContextMenu from "./ContextMenu.vue";
-import Test from "./Test.vue";
 import ContextOption from "@/components/ContextOption.vue";
-import ContextGroup from "./components/ContextGroup.vue";
 import type { Action } from "@/types";
-import RewindSvg from "@/icons/Rewind.svg?raw";
+import { ContextGroup } from "./Components";
 
 // import ContextGroup from "./components/ContextGroup.vue";
 // import ContextElm from "./components/ContextElm.vue";
@@ -15,6 +13,7 @@ const shouldRender = ref(true);
 //   contextApi.highlight("Test1111", "middle");
 // }, 3000);
 
+//@ts-ignore
 const TestProps = {
   type: "action",
   label: "Testaaaa1",
@@ -47,6 +46,7 @@ onMounted(() => {
   // }, 2000);
 });
 
+//@ts-ignore
 function generateNestedObjects(depth: number, maxDepth: number) {
   let baseObject = {
     type: "action",
@@ -70,120 +70,39 @@ function generateNestedObjects(depth: number, maxDepth: number) {
 
 <template>
   <ContextMenu :area="area">
+    <!-- <ContextOption
+      :props="{
+        label: 'aa',
+        init: () => console.log('Test'),
+        disabled: false,
+      }"
+    /> -->
     <ContextOption
       :props="{
-        label: 'Back',
+        type: 'action',
+        label: 'Test',
         init: () => console.log('Test'),
         disabled: false,
       }"
     >
       <ContextOption
         :props="{
-          label: 'Testbbbb',
+          type: 'action',
+          label: 'Test4',
           init: () => console.log('Test'),
-          hotkey: {
-            mac: 'command',
-            combination: 'Ctrl+T',
-          },
-          disabled: true,
+          disabled: false,
         }"
       />
     </ContextOption>
     <ContextOption
       :props="{
-        label: 'Forward',
+        label: 'Test1',
+        type: 'action',
         init: () => console.log('Test'),
+        disabled: false,
       }"
     />
-    <ContextGroup
-      :props="{
-        label: 'Video-controls',
-        type: 'group',
-      }"
-    >
-      <ContextOption
-        :props="{
-          label: 'Rewind',
-          icon: RewindSvg,
-          init: () => console.log('Test'),
-        }"
-      />
-    </ContextGroup>
-    <template v-for="i in 20">
-      <ContextOption
-        :props="{
-          type: 'action',
-          init: () => console.log('Action 1.1'),
-          label: `Action ${i}`,
-          hotkey: {
-            combination: '+ T',
-            mac: 'command',
-          },
-          children: [
-            //@ts-ignore
-            generateNestedObjects(0, 20),
-          ],
-        }"
-      />
-    </template>
-    <ContextOption
-      :props="{
-        label: 'Action ${i}',
-        init: () => console.log('Test'),
-        disabled: true,
-        children: [
-          {
-            label: 'Testaaaasdaa',
-            type: 'action',
-            init: () => console.log('Test'),
-          },
-        ],
-      }"
-    />
-    <ContextGroup :props="{ label: 'Test-label', type: 'group' }">
-      <ContextOption :props="TestProps" />
-
-      <!-- <ContextOption
-        :props="{
-          type: 'slot',
-          label: 'Test1',
-          hotkey: {
-            mac: 'alt',
-            combination: 'Alt+T',
-          },
-        }"
-      /> -->
-      <ContextOption
-        :props="{
-          type: 'slot',
-          label: 'Testyyy',
-          parentSlot: 'Testyyy',
-          childSlot: 'Test1',
-          hotkey: {
-            mac: 'alt',
-            combination: 'Alt+T',
-          },
-        }"
-      >
-      </ContextOption>
-    </ContextGroup>
-
-    <template #Test1>
-      <div style="color: white">gavuraaa</div>
-    </template>
-    <template #Testyyy="props">
-      <Test :contextMenuProps="props" />
-    </template>
   </ContextMenu>
-  <button
-    @click="
-      () => {
-        shouldRender = false;
-      }
-    "
-  >
-    Set
-  </button>
 </template>
 
 <style>

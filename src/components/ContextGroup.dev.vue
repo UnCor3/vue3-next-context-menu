@@ -1,13 +1,15 @@
 <template>
-  <slot></slot>
+  <CtxOptions :props="action">
+    <slot />
+  </CtxOptions>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, provide, reactive } from "vue";
+import { onMounted, onUnmounted, provide, ref } from "vue";
 import { ActionChild, ActionGroup } from "@/types";
-import { useContextMenu } from "@/store";
 import { checkLabelExists } from "@/utils";
+import CtxOptions from "@/CtxOptions.vue";
 
-const accumulatedActions = [] as ActionChild[];
+const accumulatedActions = ref([]);
 
 const { props } = defineProps<{
   props: ActionGroup;
@@ -17,17 +19,17 @@ if (!props) {
   throw new Error("You need to provide props");
 }
 
-const action = reactive({
+const action = ref({
   label: props.label,
   type: "group",
   //todo ts
   //@ts-ignore
-  children: accumulatedActions.concat(props.children || []),
+  children: accumulatedActions,
 });
 
 const handle = {
   push: (action: ActionChild) => {
-    accumulatedActions.push(action);
+    accumulatedActions.value.push(action);
   },
   get: () => action,
 };
@@ -35,22 +37,10 @@ const handle = {
 provide("groupActions", handle);
 
 onMounted(() => {
-  if (action.children.length === 0) {
-    console.warn(`Group "${action.label}" has no children`);
-  }
-
   checkLabelExists(action.label);
 
-  const { state } = useContextMenu();
-  //todo does it also need to be reactive?
-  //@ts-ignore
-  state.value.actions.push(action);
-
-  onUnmounted(() => {
-    //todo ts
-    //@ts-ignore
-    const optionIndex = state.value.actions.indexOf(action);
-    state.value.actions.splice(optionIndex, 1);
-  });
+  // if (action.children.length === 0) {
+  //   console.warn(`Group "${action.label}" has no children`);
+  // }
 });
 </script>

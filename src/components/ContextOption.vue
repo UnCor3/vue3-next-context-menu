@@ -1,11 +1,13 @@
-<template>
-  <slot />
-</template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, inject, reactive, provide } from "vue";
-import { useContextMenu } from "@/store";
+import { onMounted, inject, reactive, provide } from "vue";
 import { ActionGroup, ActionChild } from "@/types";
 import { Action } from "@/types";
+import CtxOptions from "@/CtxOptions.vue";
+
+const { props, teleportRef } = defineProps<{
+  props: Action;
+  teleportRef?: string;
+}>();
 
 const accumulatedActions = [] as ActionChild[];
 const action = reactive({
@@ -30,74 +32,81 @@ const groupActions = inject("groupActions") as {
   get: () => ActionGroup;
 } | null;
 
-const { props } = defineProps<{
-  props: Action;
-}>();
-
-const { state } = useContextMenu();
-
 let modifiedProps: Action;
 
 const getAction = (action: Action) => {
-  if (action.type === "slot") {
-    modifiedProps = reactive(action);
-    return;
-  }
+  // if (action.type === "slot") {
+  //   modifiedProps = ref(action);
+  //   return;
+  // }
   props.type = "action";
-  modifiedProps = reactive(action);
   return;
 };
 
 getAction(props);
 
 if (contextOption) {
-  contextOption.push(modifiedProps!);
+  // contextOption.push(modifiedProps!);
 } else if (groupActions) {
-  groupActions.push(modifiedProps!);
+  // groupActions.push(modifiedProps!);
 } else {
-  state.value.actions.push(modifiedProps!);
+  // state.value.actions.push(modifiedProps!);
 }
 
 onMounted(() => {
-  if (contextOption) {
-    onUnmounted(() => {
-      if (typeof contextOption.get().children === "undefined") return;
-      //todo getaction
-      const index = contextOption.get().children!.indexOf(modifiedProps);
-      //todo getaction
-      //@ts-ignore
-      contextOption.get().children.splice(index, 1);
-    });
-  }
-
-  if (handle.get().children.length > 0) {
-    //todo ts
-    //@ts-ignore
-    if (props.type === "slot") return;
-    //@ts-ignore
-    props.children = handle.get().children;
-  }
-
-  //todo getaction
-  //only need this if it is not a group
-  groupActions &&
-    onUnmounted(() => {
-      //todo ts
-      //@ts-ignore
-      const index = groupActions.get().children.indexOf(getAction(props));
-      //todo ts
-      //@ts-ignore
-      groupActions.get().children.splice(index, 1);
-    });
-
-  !groupActions &&
-    !contextOption &&
-    onUnmounted(() => {
-      //filtering trough reference does not work idk why
-      //so had to first find the index and then filter it
-      //TODO
-      const optionIndex = state.value.actions.indexOf(props);
-      state.value.actions.splice(optionIndex, 1);
-    });
+  // if (groupActions) {
+  //   groupActions.push(props);
+  // }
+  // if (contextOption) {
+  //   onUnmounted(() => {
+  //     if (typeof contextOption.get().children === "undefined") return;
+  //     //todo getaction
+  //     const index = contextOption.get().children!.indexOf(modifiedProps);
+  //     //todo getaction
+  //     //@ts-ignore
+  //     contextOption.get().children.splice(index, 1);
+  //   });
+  // }
+  // if (handle.get().children.length > 0) {
+  //   //todo ts
+  //   //@ts-ignore
+  //   if (props.type === "slot") return;
+  //   //@ts-ignore
+  //   props.children = handle.get().children;
+  // }
+  // //todo getaction
+  // //only need this if it is not a group
+  // groupActions &&
+  //   onUnmounted(() => {
+  //     //todo ts
+  //     //@ts-ignore
+  //     const index = groupActions.get().children.indexOf(getAction(props));
+  //     //todo ts
+  //     //@ts-ignore
+  //     groupActions.get().children.splice(index, 1);
+  //   });
+  // !groupActions &&
+  //   !contextOption &&
+  //   onUnmounted(() => {
+  //     //filtering trough reference does not work idk why
+  //     //so had to first find the index and then filter it
+  //     //TODO
+  //     const optionIndex = state.value.actions.indexOf(props);
+  //     state.value.actions.splice(optionIndex, 1);
+  //   });
 });
+console.log(teleportRef);
 </script>
+<template>
+  <Teleport to=".vue-3-context-hover-menus" v-if="contextOption">
+    <CtxOptions :props="{ ...props, type: 'action' }">
+      <template v-slot="{}">
+        {{ JSON.stringify(Test) }}
+        <slot :test />
+      </template>
+    </CtxOptions>
+  </Teleport>
+  <CtxOptions :props="{ ...props, type: 'action' }" v-else>
+    <slot />
+  </CtxOptions>
+</template>
