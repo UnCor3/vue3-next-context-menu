@@ -8,7 +8,33 @@
     :data-label="props.label"
   >
     <OptionAttrs :props="props" />
+    <Teleport to=".vue-3-context-hover-menus" v-if="!root">
+      <ul
+        ref="ulRef"
+        class="hover-menu"
+        :class="{
+          'no-child': !props.children,
+        }"
+      >
+        <slot />
+        <!-- <template v-for="child in props.children">
+          <CtxOptions :props="child" :root="false">
+            <template
+              v-for="(
+                _, //@ts-ignore
+                name
+              ) in $slots"
+              v-slot:[name]="//@ts-ignore
+              data"
+            >
+              <slot :name="name" v-bind="data" />
+            </template>
+          </CtxOptions>
+        </template> -->
+      </ul>
+    </Teleport>
     <ul
+      v-else
       ref="ulRef"
       class="hover-menu"
       :class="{

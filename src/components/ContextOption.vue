@@ -4,9 +4,8 @@ import { ActionGroup, ActionChild } from "@/types";
 import { Action } from "@/types";
 import CtxOptions from "@/CtxOptions.vue";
 
-const { props, teleportRef } = defineProps<{
+const { props } = defineProps<{
   props: Action;
-  teleportRef?: string;
 }>();
 
 const accumulatedActions = [] as ActionChild[];
@@ -95,18 +94,9 @@ onMounted(() => {
   //     state.value.actions.splice(optionIndex, 1);
   //   });
 });
-console.log(teleportRef);
 </script>
 <template>
-  <Teleport to=".vue-3-context-hover-menus" v-if="contextOption">
-    <CtxOptions :props="{ ...props, type: 'action' }">
-      <template v-slot="{}">
-        {{ JSON.stringify(Test) }}
-        <slot :test />
-      </template>
-    </CtxOptions>
-  </Teleport>
-  <CtxOptions :props="{ ...props, type: 'action' }" v-else>
+  <CtxOptions :props="{ ...props, type: 'action' }" :root="!!contextOption">
     <slot />
   </CtxOptions>
 </template>

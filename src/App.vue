@@ -77,12 +77,10 @@ function generateNestedObjects(depth: number, maxDepth: number) {
         disabled: false,
       }"
     /> -->
-    <ContextOption
+    <ContextGroup
       :props="{
-        type: 'action',
+        type: 'group',
         label: 'Test',
-        init: () => console.log('Test'),
-        disabled: false,
       }"
     >
       <ContextOption
@@ -93,7 +91,7 @@ function generateNestedObjects(depth: number, maxDepth: number) {
           disabled: false,
         }"
       />
-    </ContextOption>
+    </ContextGroup>
     <ContextOption
       :props="{
         label: 'Test1',
