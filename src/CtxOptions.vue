@@ -1,96 +1,95 @@
 <template>
   <!-- Action -->
   <li
-    v-if="typeof props === 'object' && props.type == 'action'"
+    v-if="props.type == 'action'"
     class="context-option"
-    :class="{
-      clickable: !props.children,
-      root,
-      disabled: props.disabled,
-    }"
+    :class="neededClasses"
     ref="liRef"
-    liRef="true"
+    :data-label="props.label"
   >
-    <span class="label">
-      {{ props.label }}
-    </span>
-    <span
-      v-if="
-        typeof props === 'object' && props.type === 'action' && props.hotkey
-      "
-      class="hotkey"
-    >
-      <template v-if="props.hotkey.mac">
-        <Command v-if="props.hotkey.mac === 'command'" />
-        <Alt v-if="props.hotkey.mac === 'alt'" />
-      </template>
-      {{ props.hotkey.combination }}</span
-    >
-    <span class="checked" v-if="props.enabled"> <Tick /> </span>
-    <span class="sign" v-if="props.children"><ArrowRight /></span>
-    <Teleport to="body" v-if="root">
-      <Option
-        :children="props.children!"
-        :isOpen="isOpen"
-        :root="false"
+    <OptionAttrs :props="props" />
+    <Teleport v-if="root" to=".vue-3-context-hover-menus">
+      <ul
         ref="ulRef"
+        class="hover-menu"
+        :class="{
+          'no-child': !props.children,
+        }"
       >
-        <template
-          v-for="(
-            _, //@ts-ignore
-            name
-          ) in $slots"
-          v-slot:[name]="data"
-        >
-          <slot :name="name" v-bind="data"></slot>
+        <template v-for="child in props.children">
+          <CtxOptions :props="child" :root="false">
+            <template
+              v-for="(
+                _, //@ts-ignore
+                name
+              ) in $slots"
+              v-slot:[name]="//@ts-ignore
+              data"
+            >
+              <slot :name="name" v-bind="data" />
+            </template>
+          </CtxOptions>
         </template>
-      </Option>
+      </ul>
     </Teleport>
-    <Option
-      :children="props.children!"
-      :isOpen="isOpen"
-      :root="root"
-      v-else
-      ref="ulRef"
-    >
-      <template
-        v-for="(
-          _, //@ts-ignore
-          name
-        ) in $slots"
-        v-slot:[name]="data"
+    <template v-else>
+      <ul
+        ref="ulRef"
+        class="hover-menu"
+        :class="{
+          'no-child': !props.children,
+        }"
       >
-        <slot :name="name" v-bind="data"></slot>
-      </template>
-    </Option>
+        <template v-for="child in props.children">
+          <CtxOptions :props="child" :root="false">
+            <template
+              v-for="(
+                _, //@ts-ignore
+                name
+              ) in $slots"
+              v-slot:[name]="//@ts-ignore
+              data"
+            >
+              <slot :name="name" v-bind="data" />
+            </template>
+          </CtxOptions>
+        </template>
+      </ul>
+    </template>
   </li>
   <!-- Group -->
-  <template v-else-if="typeof props === 'object' && props.type == 'group'">
-    <li class="group">
-      <CtxOptions v-for="option in props.children" :props="option" :root="root">
-        <template v-for="(_, name) in $slots" v-slot:[name]="data">
-          <slot :name="name" v-bind="data"></slot>
+  <template v-else-if="props.type == 'group'">
+    <li class="group" :data-label="props.label">
+      <CtxOptions v-for="option in props.children" :props="option" :root="true">
+        <template
+          v-for="(_, name) in $slots"
+          v-slot:[name]="//@ts-ignore
+          data"
+        >
+          <slot :name="name" v-bind="data" />
         </template>
       </CtxOptions>
     </li>
   </template>
   <!-- Slot -->
-  <template v-if="typeof props === 'string'">
-    <li ref="liRef" class="context-option">
-      <span class="label">
-        {{ props }}
-      </span>
-      <Teleport to="body">
+  <template v-else-if="props.type === 'slot'">
+    <li
+      ref="liRef"
+      class="context-option"
+      :class="neededClasses"
+      :data-label="props.label"
+    >
+      <OptionAttrs :props="props" v-if="!props.parentSlot" />
+      <slot v-else :name="props.parentSlot" />
+      <Teleport to=".vue-3-context-hover-menus">
         <ul
           class="hover-menu"
-          :ref="
-            (e) =>
-              (ulRef = {
-                element: e,
-              })
-          "
+          :class="{
+            'no-child': !props.childSlot,
+          }"
+          ref="ulRef"
         >
-          <slot :name="props" />
+          <slot v-if="props.childSlot" :name="props.childSlot" />
         </ul>
       </Teleport>
     </li>
@@ -98,39 +97,57 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref, watch } from "vue";
+import { defineProps, onMounted, ref, watch, computed } from "vue";
 import { createPopper } from "@popperjs/core";
 import { useContextMenu } from "@/store";
-import type { Action } from "./types";
-import Option from "./Option.vue";
-import ArrowRight from "./icons/ArrowRight.vue";
-import Command from "@/icons/Command.vue";
-import Alt from "@/icons/Alt.vue";
-import Tick from "@/icons/Tick.vue";
+import type { Action } from "@/types";
+import OptionAttrs from "@/OptionAttrs.vue";
+// import { preventOverflow, flip } from "@popperjs/core/lib/modifiers";
+// import { remToPx } from "./helpers";
+// const offsetModifier = {
+//   name: "offset",
+//   options: {
+//     offset: [0, remToPx(0.5)],
+//   },
+// };
 
 const { state } = useContextMenu();
 const liRef = ref<HTMLElement>();
-const ulRef = ref<{
-  element: HTMLElement;
-}>();
+const ulRef = ref<HTMLElement>();
 const shouldShow = ref(false);
 
 type OptionsProps = {
   props: Action;
-  isOpen: boolean;
   root: boolean;
 };
 
 const { props, root } = defineProps<OptionsProps>();
-onMounted(async () => {
-  // console.log(props);
-  if (!liRef.value || !ulRef.value?.element) return;
+
+// const popperOptions = {
+//   modifiers: [offsetModifier, preventOverflow, flip],
+//   strategy: root ? "absolute" : "relative",
+//   placement: "right-start",
+// };
+
+const neededClasses = computed(() => ({
+  clickable: props.type === "slot" ? props.childSlot : !props.children,
+  root,
+  //@ts-ignore does not exist on group but undefined is falsy
+  disabled: props.disabled,
+}));
+
+onMounted(() => {
+  //todo is this needed ?
+  if (!liRef.value || !ulRef.value) return;
+  ulRef.value!.style.display = "none";
+
   root &&
     watch(
       () => state.value.currentAction,
       () => {
         if (shouldShow.value) {
-          ulRef.value!.element.removeAttribute("data-show");
+          ulRef.value!.style.display = "none";
+          ulRef.value!.removeAttribute("data-show");
           shouldShow.value = false;
         }
       }
@@ -142,50 +159,32 @@ onMounted(async () => {
       (isOpen) => {
         // console.log(isOpen);
         if (!isOpen && shouldShow.value) {
-          ulRef.value!.element.removeAttribute("data-show");
+          ulRef.value!.removeAttribute("data-show");
           shouldShow.value = false;
         }
       }
     );
 
-  //   watch(
-  //   () => state.value.currentAction,
-  //   (action,prevAction) => {
-  //     if (!action) return;
-  //       if (
-  //         typeof action === "string" &&
-
-  //       ) {
-  //         console.log("show string");
-  //         show();
-  //       }
-  //       //action
-  //       if (
-  //         typeof action === "object" &&
-  //         typeof rootAction === "object" &&
-  //         action.label === rootAction.label &&
-  //         action.type === "action"
-  //       ) {
-  //         console.log("show object");
-  //         show();
-  //       } else {
-  //         console.log("hide");
-  //         hide();
-  //       }
-  //     }
-
-  // );
   if (typeof props === "object" && props.type == "group") return;
   const popperInstance = createPopper(
-    liRef.value!,
-    ulRef.value.element!,
-    state.value.popperOptions!
+    liRef.value,
+    ulRef.value!,
+    state.value.popperOptions as any
   );
   function show() {
+    ulRef.value!.style.display = "block";
+    // if (props.type === "slot" && !props.childSlot) {
+    //   shouldShow.value = true;
+    //   return;
+    // }
     if (root) {
       state.value.currentAction = props;
     }
-    ulRef.value!.element.setAttribute("data-show", "true");
+    //hack to get the animation to work
+    //by calling it after the call stack is done
+    setTimeout(() => {
+      ulRef.value!.setAttribute("data-show", "");
+    }, 0);
     popperInstance.update();
     shouldShow.value = true;
     // console.log("root", root, { label: props.label });
@@ -196,7 +195,8 @@ onMounted(async () => {
 
   function hide() {
     if (root) return;
-    ulRef.value!.element.removeAttribute("data-show");
+    ulRef.value!.style.display = "none";
+    ulRef.value!.removeAttribute("data-show");
     if (!root) return;
     shouldShow.value = false;
   }
@@ -212,80 +212,154 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-.context-option:hover .hover-menu {
-}
-/* .hover-menu:hover .context-option {
-  visibility: visible;
-  scale: 1;
-  opacity: 1;
-  z-index: 1;
-  position: absolute;
-} */
+//todo does it need to be scoped ?
+<style lang="scss">
+.vue-3-context-menu,
+.vue-3-context-hover-menus {
+  .context-option {
+    display: flex;
+    position: relative;
+    list-style: none;
+    padding: 0.45rem 0.5rem;
+    max-width: 100vw;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    /* min-width: 200px; */
+  }
 
-.context-option.root:after {
-  display: none;
+  .context-option {
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0%;
+      left: 100%;
+      width: 0.5rem;
+      height: 100%;
+      background: transparent;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: 0.5rem;
+      height: 100%;
+      transform: translateX(-100%);
+      background: transparent;
+    }
+
+    &.root {
+      &::after {
+        display: none;
+      }
+      &::before {
+        display: none;
+      }
+    }
+
+    .hotkey {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.1rem;
+      background-color: white;
+      border-radius: 0.25rem;
+      color: rgba(0, 0, 0, 0.685);
+      padding: 0.2rem;
+      font-size: 0.85rem;
+    }
+
+    .checked {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.3rem;
+    }
+    &.disabled {
+      opacity: 0.5;
+    }
+    &.highlight {
+      animation: highlight 0.5s linear;
+    }
+
+    &:hover {
+      background-color: rgba(128, 128, 128, 0.4);
+      border-radius: 0.25rem;
+    }
+    &.clickable {
+      cursor: pointer;
+    }
+    .sign {
+      height: 100%;
+      margin-left: 1rem;
+
+      &.hidden {
+        opacity: 0;
+      }
+    }
+    .label {
+      width: 100%;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .icon {
+      min-width: 1.5rem;
+    }
+  }
+
+  .group {
+    padding: 0.2rem 0;
+    margin: 0.5rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.555);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.555);
+  }
 }
 
-.context-option.root:before {
-  display: none;
+.vue-3-context-hover-menus {
+  .hover-menu {
+    /* display: none; */
+    visibility: hidden;
+    opacity: 0;
+    scale: 0.98;
+    transition: scale ease 0.3s, opacity ease 0.3s;
+    border: rgba(128, 128, 128, 0.4) 1px solid;
+    background-color: black;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .hover-menu[data-show] {
+    /* display: block; */
+    visibility: visible;
+    scale: 1;
+    opacity: 1;
+    z-index: 1;
+    position: absolute;
+  }
+
+  .hover-menu.no-child {
+    display: none;
+  }
 }
 
-.context-option .hotkey {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.1rem;
-  background-color: white;
-  border-radius: 0.25rem;
-  color: rgba(0, 0, 0, 0.685);
-  padding: 0.2rem;
-  font-size: 0.85rem;
-}
-
-.context-option .checked {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 0.3rem;
-}
-
-.context-option.disabled {
-  opacity: 0.5;
-}
-
-.context-option::after {
-  content: "";
-  position: absolute;
-  top: 0%; /* Position it at the bottom of the parent */
-  left: 100%;
-  width: 0.5rem;
-  height: 100%; /* Adjust this to the size of the gap */
-  background: transparent;
-}
-.context-option::before {
-  content: "";
-  position: absolute;
-  top: 0%; /* Position it at the bottom of the parent */
-  left: 0%;
-  width: 0.5rem;
-  height: 100%; /* Adjust this to the size of the gap */
-  transform: translateX(-100%);
-  background: transparent;
-}
-
-.hover-menu[data-show] {
-  visibility: visible;
-  scale: 1;
-  opacity: 1;
-  z-index: 1;
-  position: absolute;
-}
-
-.group {
-  padding: 0.2rem 0;
-  margin: 0.5rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.555);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.555);
+@keyframes highlight {
+  0% {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  25% {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  75% {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0);
+  }
 }
 </style>

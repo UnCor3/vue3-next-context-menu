@@ -1,21 +1,37 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
+import dts from "vite-plugin-dts";
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "./",
-  resolve: {
-    alias: {
-      "@": "/src",
+  build: {
+    lib: {
+      entry: [
+        path.resolve(__dirname, "src/index.ts"),
+        path.resolve(__dirname, "src/Components.ts"),
+      ],
+      formats: ["es"],
+      fileName: (format, name) => {
+        return `${name}.${format}.js`;
+      },
+    },
+    rollupOptions: {
+      external: ["vue", "@popperjs/core", "@popperjs/core/lib/modifiers"],
+      output: {
+        globals: {
+          vue: "Vue",
+          "@popperjs/core": "@popperjs/core",
+          "@popperjs/core/lib/modifiers": "@popperjs/core/lib/modifiers",
+        },
+      },
     },
   },
-  plugins: [
-    vue(),
-    nodePolyfills({
-      overrides: {
-        fs: "memfs",
-      },
-    }),
-  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+    },
+  },
+  plugins: [vue(), dts({})],
 });

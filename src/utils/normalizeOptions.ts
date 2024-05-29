@@ -1,5 +1,5 @@
 import type { ExplorerOptions } from "@/types";
-import type { Options } from "@popperjs/core";
+// import type { Options } from "@popperjs/core";
 import { defaultOptions } from "@/constants";
 import { preventOverflow, flip } from "@popperjs/core/lib/modifiers";
 import { remToPx } from "@/helpers";
@@ -39,32 +39,32 @@ export async function normalizeArea(options: ExplorerOptions) {
   } else if (isElm(options.area)) {
     elm = options.area;
   } else {
-    throw new Error("Given area is not a valid HTMLElement");
+    elm = document.body;
   }
 
   return {
     area: elm,
   };
 }
+//@ts-ignore
+// const getDefaultPopperOptions = async (): Promise<Options> => {
+//   const { remToPx } = await import("../helpers");
+//   const { default: preventOverflow } = await import(
+//     "@popperjs/core/lib/modifiers/preventOverflow.js"
+//   );
+//   const { default: flip } = await import(
+//     "@popperjs/core/lib/modifiers/flip.js"
+//   );
+//   const offsetModifier = {
+//     name: "offset",
+//     options: {
+//       offset: [0, remToPx(0.5)],
+//     },
+//   };
 
-const getDefaultPopperOptions = async (): Promise<Options> => {
-  const { remToPx } = await import("../helpers");
-  const { default: preventOverflow } = await import(
-    "@popperjs/core/lib/modifiers/preventOverflow.js"
-  );
-  const { default: flip } = await import(
-    "@popperjs/core/lib/modifiers/flip.js"
-  );
-  const offsetModifier = {
-    name: "offset",
-    options: {
-      offset: [0, remToPx(0.5)],
-    },
-  };
-
-  return {
-    modifiers: [offsetModifier, preventOverflow, flip],
-    strategy: "absolute",
-    placement: "right-start",
-  };
-};
+//   return {
+//     modifiers: [offsetModifier, preventOverflow, flip],
+//     strategy: "absolute",
+//     placement: "right-start",
+//   };
+// };

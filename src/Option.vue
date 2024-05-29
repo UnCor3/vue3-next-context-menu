@@ -7,20 +7,14 @@
     }"
   >
     <template v-for="child in children">
-      <CtxOptions
-        v-if="typeof child == 'object'"
-        :props="{ ...child }"
-        :isOpen="isOpen"
-        :root="false"
-      />
-      <slot v-else :name="child" :props="{ isOpen }" />
+      <CtxOptions :props="child" :root="false" />
     </template>
   </ul>
 </template>
 
 <script setup lang="ts">
-import CtxOptions from "./CtxOptions.vue";
-import { ActionChild } from "./types";
+import CtxOptions from "@/CtxOptions.vue";
+import { ActionChild, Slotname } from "@/types";
 import { ref } from "vue";
 
 const element = ref<HTMLElement>();
@@ -31,17 +25,9 @@ defineExpose({
 
 defineProps({
   children: {
-    type: Array as () => (ActionChild | string)[],
+    type: Array as () => (ActionChild | Slotname)[],
     required: true,
     default: () => [],
-  },
-  isOpen: {
-    type: Boolean,
-    required: true,
-  },
-  root: {
-    type: Boolean,
-    required: true,
   },
 });
 </script>

@@ -3,12 +3,13 @@
   <!-- {{ contextMenuProps.isOpen }} -->
 </template>
 <script setup lang="ts">
+//@ts-ignore
 type ContextMenuProps = {
   contextMenuProps: {
     isOpen: boolean;
   };
 };
-const props = defineProps();
+//@ts-ignore
 
-console.log("init test");
+const props = defineProps();
 </script>

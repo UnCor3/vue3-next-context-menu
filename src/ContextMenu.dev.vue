@@ -34,7 +34,6 @@ onMounted(async () => {
     e.stopPropagation();
     state.value.isOpen = false;
   });
-
   //! IS THIS NEEDED?
   //todo
   // ctxMenuRef.value.elm.addEventListener("mouseleave", () => {

@@ -1,5 +1,6 @@
 <template>
-  <div class="context">
+  <div class="vue-3-context-hover-menus"></div>
+  <div class="vue-3-context-menu">
     <ul
       class="context-menu"
       tabindex="-1"
@@ -13,9 +14,8 @@
       <div style="position: relative">
         <CtxOptions
           v-for="action in state.actions"
-          :key="action"
+          :key="action.label"
           :props="action"
-          :isOpen="state.isOpen"
           :root="true"
         >
           <!-- :slot="action.slot" -->
@@ -41,78 +41,55 @@ defineExpose({
 </script>
 
 <style>
-.context {
+.vue-3-context-menu {
   color: white !important;
-}
-
-.context-option {
-  display: flex;
-  position: relative;
-  list-style: none;
-  padding: 0.45rem 0.5rem;
-  max-width: 100vw;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  min-width: 200px;
-}
-
-.context-option:hover {
-  background-color: rgba(128, 128, 128, 0.4);
-  border-radius: 0.25rem;
-}
-
-.context-option.clickable {
-  cursor: pointer;
-}
-
-.context-option .sign {
-  height: 100%;
-  margin-left: 1rem;
-}
-
-.context-option .label {
-  width: 100%;
-  text-align: left;
-}
-
-.hover-menu {
-  visibility: hidden;
-  opacity: 0;
-  scale: 0.98;
-  transition: scale ease 0.3s, opacity ease 0.3s;
-  border: rgba(128, 128, 128, 0.4) 1px solid;
-  background-color: black;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-}
-
-.hover-menu .no-child {
-  display: none !important;
 }
 </style>
 
-<style scoped>
-.context-menu {
-  visibility: hidden;
-  background-color: black;
-  border: rgba(128, 128, 128, 0.4) 1px solid;
-  min-height: 100px;
-  min-width: 100px;
-  /* z-index: 1002; */
-  user-select: none;
-  border-radius: 0.5rem;
-  position: fixed;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  max-height: 90vh;
-  overflow-y: auto;
-}
+<style lang="scss">
+.vue-3-context-menu {
+  .context-menu {
+    visibility: hidden;
+    background-color: black;
+    border: rgba(128, 128, 128, 0.4) 1px solid;
+    min-height: 100px;
+    min-width: 200px;
+    /* z-index: 1002; */
+    user-select: none;
+    border-radius: 0.5rem;
+    position: fixed;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    max-height: 75vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 200px;
+  }
 
-.context-menu:focus {
-  outline: none;
-}
+  .context-menu:focus {
+    outline: none;
+  }
 
-.context-menu.visible {
-  visibility: visible;
+  .context-menu.visible {
+    visibility: visible;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5rem;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 </style>

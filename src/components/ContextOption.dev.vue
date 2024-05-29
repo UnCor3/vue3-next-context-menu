@@ -3,9 +3,13 @@
 </template>
 <script setup lang="ts">
 import { onMounted, onUnmounted, inject, reactive, provide } from "vue";
-import { useContextMenu } from "@/store";
 import { ActionGroup, ActionChild } from "@/types";
+import { useContextMenu } from "@/store";
 import { Action } from "@/types";
+import { checkLabelExists } from "@/utils";
+
+const isCtxMenu = inject("isCtxMenu");
+if (!isCtxMenu) throw new Error("ContextGroup must be a child of ContextMenu");
 
 const accumulatedActions = [] as ActionChild[];
 const action = reactive({
@@ -34,6 +38,10 @@ const { props } = defineProps<{
   props: Action;
 }>();
 
+if (!props) {
+  throw new Error("You need to provide props");
+}
+
 const { state } = useContextMenu();
 
 let modifiedProps: Action;
@@ -49,6 +57,8 @@ const getAction = (action: Action) => {
 };
 
 getAction(props);
+
+checkLabelExists(props.label);
 
 if (contextOption) {
   contextOption.push(modifiedProps!);
