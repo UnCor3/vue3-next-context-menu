@@ -119,6 +119,7 @@ function generateNestedObjects(depth: number, maxDepth: number) {
             combination: '+ T',
             mac: 'command',
           },
+          //@ts-ignore
           children: [
             //@ts-ignore
             generateNestedObjects(0, 20),
@@ -126,20 +127,6 @@ function generateNestedObjects(depth: number, maxDepth: number) {
         }"
       />
     </template>
-    <ContextOption
-      :props="{
-        label: 'Action ${i}',
-        init: () => console.log('Test'),
-        disabled: true,
-        children: [
-          {
-            label: 'Testaaaasdaa',
-            type: 'action',
-            init: () => console.log('Test'),
-          },
-        ],
-      }"
-    />
     <ContextGroup :props="{ label: 'Test-label', type: 'group' }">
       <ContextOption :props="TestProps" />
 

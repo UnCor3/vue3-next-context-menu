@@ -1,4 +1,4 @@
-import type { ExplorerOptions } from "@/types";
+import type { Options } from "@/types";
 // import type { Options } from "@popperjs/core";
 import { defaultOptions } from "@/constants";
 import { preventOverflow, flip } from "@popperjs/core/lib/modifiers";
@@ -7,7 +7,7 @@ import { remToPx } from "@/helpers";
 const isElm = (elm: any) =>
   elm instanceof HTMLElement || elm instanceof Element;
 
-export function normalizeOptions(options: ExplorerOptions) {
+export function normalizeOptions(options: Options) {
   const offsetModifier = {
     name: "offset",
     options: {
@@ -31,7 +31,7 @@ export function normalizeOptions(options: ExplorerOptions) {
   });
 }
 
-export async function normalizeArea(options: ExplorerOptions) {
+export async function normalizeArea(options: Options) {
   let elm;
   if (typeof options.area === "string") {
     elm = document.querySelector(options.area) as HTMLElement;

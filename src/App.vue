@@ -1,105 +1,173 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
 import ContextMenu from "./ContextMenu.vue";
-import ContextOption from "@/components/ContextOption.vue";
-import type { Action } from "@/types";
+import ContextOption from "@/components/ContextOption.dev.vue";
 import { ContextGroup } from "./Components";
+import RewindSvg from "@/icons/Rewind.svg?raw";
+import CutSvg from "@/icons/Cut.svg?raw";
+import MuteSvg from "@/icons/Mute.svg?raw";
+import { ref } from "vue";
+import { Action } from "@/types";
 
-// import ContextGroup from "./components/ContextGroup.vue";
-// import ContextElm from "./components/ContextElm.vue";
-const area = document.body;
-const shouldRender = ref(true);
-// setTimeout(() => {
-//   contextApi.highlight("Test1111", "middle");
-// }, 3000);
-
-//@ts-ignore
-const TestProps = {
+const testProps = ref<Action>({
   type: "action",
-  label: "Testaaaa1",
-  init: () => console.log("Test"),
-  hotkey: {
-    mac: "alt",
-    combination: "Alt+T",
+  label: "Test2111",
+  init() {
+    this.switch!.isActive = !this.switch!.isActive;
+    return true;
   },
-  disabled: true,
-  children: [
-    {
-      label: "Testaaaa",
-      type: "action",
-      init: () => console.log("Test"),
-    },
-  ],
-} as Action;
-
-// setTimeout(() => {
-//   TestProps.value.label = "Testaaaa4";
-//   TestProps.value.disabled = false;
-// }, 2000);
-
-onMounted(() => {
-  setTimeout(() => {
-    shouldRender.value = false;
-  }, 1000);
-  // setTimeout(() => {
-  //   shouldRender.value = true;
-  // }, 2000);
+  switch: {
+    isActive: true,
+  },
 });
-
-//@ts-ignore
-function generateNestedObjects(depth: number, maxDepth: number) {
-  let baseObject = {
-    type: "action",
-    init: () => console.log(`Action 1.${depth}`),
-    label: `Action 1.${depth}`,
-    hotkey: {
-      combination: "ctrl+a",
-      mac: "command",
-    },
-    children: [],
-  };
-
-  if (depth < maxDepth) {
-    //@ts-ignore
-    baseObject.children.push(generateNestedObjects(depth + 1, maxDepth));
-  }
-
-  return baseObject;
-}
 </script>
 
 <template>
-  <ContextMenu :area="area">
-    <!-- <ContextOption
+  <ContextMenu theme="light">
+    <ContextOption
       :props="{
-        label: 'aa',
+        type: 'action',
+        label: 'Back',
         init: () => console.log('Test'),
-        disabled: false,
+        preserveIconSpace: true,
       }"
-    /> -->
+    />
+    <ContextOption
+      :props="{
+        type: 'action',
+        label: 'Forward',
+        init: () => console.log('Test'),
+        disabled: true,
+        preserveIconSpace: true,
+      }"
+    />
+    <ContextOption
+      :props="{
+        type: 'action',
+        label: 'Reload',
+        init: () => console.log('Test'),
+        preserveIconSpace: true,
+      }"
+    />
+
     <ContextGroup
       :props="{
         type: 'group',
-        label: 'Test',
+        label: 'Video Controls',
+        showLabel: true,
       }"
     >
       <ContextOption
         :props="{
           type: 'action',
-          label: 'Test4',
+          label: 'Rewind',
           init: () => console.log('Test'),
           disabled: false,
+          hotkey: {
+            mac: 'alt',
+            combination: '+ T',
+          },
+          icon: RewindSvg,
+        }"
+      >
+        <ContextGroup
+          :props="{
+            type: 'group',
+            label: 'Test11',
+          }"
+        >
+          <ContextOption
+            :props="{
+              type: 'action',
+              label: 'Test5',
+              init: () => console.log('Test'),
+              disabled: false,
+            }"
+          /><ContextOption
+            :props="{
+              type: 'action',
+              label: 'Test6',
+              init: () => console.log('Test'),
+              disabled: false,
+            }"
+          >
+            <ContextGroup
+              :props="{
+                type: 'group',
+                label: 'Test1123112',
+              }"
+            >
+              <ContextOption
+                :props="{
+                  type: 'action',
+                  label: 'Test7',
+                  init: () => console.log('Test'),
+                  disabled: false,
+                }"
+              />
+            </ContextGroup>
+          </ContextOption>
+        </ContextGroup>
+      </ContextOption>
+      <ContextOption
+        :props="{
+          label: 'Cut',
+          type: 'action',
+          init: () => {
+            console.log('Test');
+            return true;
+          },
+          disabled: false,
+          icon: CutSvg,
+        }"
+      />
+      <ContextOption
+        :props="{
+          label: 'Mute',
+          type: 'action',
+          init: () => console.log('Test'),
+          disabled: false,
+          icon: MuteSvg,
         }"
       />
     </ContextGroup>
     <ContextOption
       :props="{
-        label: 'Test1',
+        label: 'Test12131',
         type: 'action',
         init: () => console.log('Test'),
-        disabled: false,
+        disabled: true,
       }"
-    />
+    >
+      <template #Icon>
+        <div>Icon</div>
+      </template>
+      <template #Label>
+        <div>Label</div>
+      </template>
+      <template #Hotkey>
+        <div>Hotkey</div>
+      </template>
+    </ContextOption>
+    <ContextOption
+      :props="{
+        type: 'slot',
+        parentSlot: 'Test',
+        label: 'Test2',
+      }"
+    >
+      <template #Test>
+        <div>Hello from slot</div>
+      </template>
+    </ContextOption>
+    <ContextOption :props="testProps">
+      <!-- <ContextOption
+        :props="{
+          type: 'action',
+          label: 'Test2111asd',
+          init: (props) => console.log(props),
+        }"
+      /> -->
+    </ContextOption>
   </ContextMenu>
 </template>
 
@@ -107,7 +175,16 @@ function generateNestedObjects(depth: number, maxDepth: number) {
 @import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap");
 body {
   height: 100vh;
-  background-color: black;
+  background-color: white;
   font-family: "Nanum Gothic", sans-serif;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
 }
 </style>

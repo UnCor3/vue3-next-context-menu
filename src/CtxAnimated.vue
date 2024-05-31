@@ -1,6 +1,6 @@
 <template>
-  <div class="vue-3-context-hover-menus"></div>
-  <div class="vue-3-context-menu">
+  <div class="vue-3-context-hover-menus" :class="theme" />
+  <div class="vue-3-context-menu" :class="theme">
     <ul
       class="context-menu"
       tabindex="-1"
@@ -18,11 +18,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import CtxOptions from "@/CtxOptions.vue";
 import { useContextMenu } from "@/store";
-import { ref } from "vue";
-
+import { ref, computed } from "vue";
+const props = defineProps<{
+  theme: "light" | "dark";
+}>();
 const { state } = useContextMenu();
+
+const theme = computed(() => {
+  if (props.theme === "dark") {
+    return { dark: true };
+  }
+  return { light: true };
+});
 
 const ctxRef = ref<HTMLElement>();
 defineExpose({
@@ -32,15 +40,34 @@ defineExpose({
 
 <style>
 .vue-3-context-menu {
-  color: white !important;
+  /* color: white !important; */
 }
 </style>
 
 <style lang="scss">
+@mixin box-shadow {
+  -webkit-box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.5);
+}
+
 .vue-3-context-menu {
+  &.light {
+    .context-menu {
+      background-color: white;
+      color: black;
+    }
+  }
+
+  &.dark {
+    .context-menu {
+      background-color: black;
+      color: white;
+    }
+  }
   .context-menu {
     visibility: hidden;
-    background-color: black;
+    @include box-shadow;
     border: rgba(128, 128, 128, 0.4) 1px solid;
     min-height: 100px;
     min-width: 200px;
@@ -80,6 +107,25 @@ defineExpose({
 
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+}
+
+.vue-3-context-hover-menus {
+  &.dark {
+    .hover-menu {
+      background-color: black;
+      color: white;
+    }
+  }
+
+  &.light {
+    .hover-menu {
+      background-color: white;
+      color: black;
+    }
+  }
+  .hover-menu {
+    @include box-shadow;
   }
 }
 </style>

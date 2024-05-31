@@ -1,5 +1,3 @@
-import { Options } from "@popperjs/core";
-
 export type ActionChild = {
   /**
    * The label of the action must be unique, will be used as a key and to display in the context menu
@@ -12,10 +10,13 @@ export type ActionChild = {
    */
   type?: "action";
   /**
-   * The function to be called when the action is clicked
-   * @example () => console.log("Copy")
+   * The function to be called when the action is clicked, you will get the passed props as params, return truthy to keep the context menu open
+   * @example () => {
+   *  console.log("Copy")
+   *  return true // does not close the context menu
+   * }
    */
-  init: (label: string) => void;
+  init: (props: Action) => Boolean | void;
   /**
    * Action will be greyed out if disabled is true
    */
@@ -33,13 +34,25 @@ export type ActionChild = {
    * @example import Svg from "@/assets/icon.svg?raw"
    */
   icon?: string;
-  children?: ActionChild[] | Slotname[];
+  preserveIconSpace?: boolean;
+  /**
+   * If passed it can't accept any children it will just be a switch, you will get the state of the switch in the init function with a property called isActive
+   * @example
+   * // in the init function
+   * function init (props)  {
+   * console.log(props.isActive) // true or false
+   * }
+   */
+  switch?: {
+    isActive: boolean;
+  };
 };
 export type ActionGroup = {
   label: string;
   children?: Action[];
   //ts todo
   type: "group";
+  showLabel?: boolean;
 };
 export type Slotname = {
   /**
@@ -94,10 +107,10 @@ export type CtxState = {
    * The current action that is being hovered on can be helpful for analytics etc
    */
   currentAction: Action | null;
-  options: ExplorerOptions | null;
+  options: Options | null;
   normalized: boolean;
 };
-export type ExplorerOptions = {
+export type Options = {
   /**
    * The area to which the context menu will be attached
    * meaning it will only work in this area
@@ -128,4 +141,9 @@ export type ExplorerOptions = {
    * }
    */
   popperOptions?: Options;
+  /**
+   * The theme of the context menu
+   * @default "dark"
+   */
+  theme?: "light" | "dark";
 };

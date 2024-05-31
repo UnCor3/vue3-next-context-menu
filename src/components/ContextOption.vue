@@ -1,102 +1,22 @@
 <script setup lang="ts">
-import { onMounted, inject, reactive, provide } from "vue";
-import { ActionGroup, ActionChild } from "@/types";
-import { Action } from "@/types";
+import { inject, getCurrentInstance } from "vue";
 import CtxOptions from "@/CtxOptions.vue";
+import { Action } from "@/types";
 
 const { props } = defineProps<{
   props: Action;
 }>();
 
-const accumulatedActions = [] as ActionChild[];
-const action = reactive({
-  children: accumulatedActions,
-});
-const handle = {
-  push: (action: ActionChild) => {
-    accumulatedActions.push(action);
-  },
-  get: () => action,
-};
+const instance = getCurrentInstance();
 
-provide("contextOption", handle);
-
-const contextOption = inject("contextOption") as {
-  push: (action: Action) => void;
-  get: () => ActionGroup;
-} | null;
-
-const groupActions = inject("groupActions") as {
-  push: (action: Action) => void;
-  get: () => ActionGroup;
-} | null;
-
-let modifiedProps: Action;
-
-const getAction = (action: Action) => {
-  // if (action.type === "slot") {
-  //   modifiedProps = ref(action);
-  //   return;
-  // }
-  props.type = "action";
-  return;
-};
-
-getAction(props);
-
-if (contextOption) {
-  // contextOption.push(modifiedProps!);
-} else if (groupActions) {
-  // groupActions.push(modifiedProps!);
-} else {
-  // state.value.actions.push(modifiedProps!);
-}
-
-onMounted(() => {
-  // if (groupActions) {
-  //   groupActions.push(props);
-  // }
-  // if (contextOption) {
-  //   onUnmounted(() => {
-  //     if (typeof contextOption.get().children === "undefined") return;
-  //     //todo getaction
-  //     const index = contextOption.get().children!.indexOf(modifiedProps);
-  //     //todo getaction
-  //     //@ts-ignore
-  //     contextOption.get().children.splice(index, 1);
-  //   });
-  // }
-  // if (handle.get().children.length > 0) {
-  //   //todo ts
-  //   //@ts-ignore
-  //   if (props.type === "slot") return;
-  //   //@ts-ignore
-  //   props.children = handle.get().children;
-  // }
-  // //todo getaction
-  // //only need this if it is not a group
-  // groupActions &&
-  //   onUnmounted(() => {
-  //     //todo ts
-  //     //@ts-ignore
-  //     const index = groupActions.get().children.indexOf(getAction(props));
-  //     //todo ts
-  //     //@ts-ignore
-  //     groupActions.get().children.splice(index, 1);
-  //   });
-  // !groupActions &&
-  //   !contextOption &&
-  //   onUnmounted(() => {
-  //     //filtering trough reference does not work idk why
-  //     //so had to first find the index and then filter it
-  //     //TODO
-  //     const optionIndex = state.value.actions.indexOf(props);
-  //     state.value.actions.splice(optionIndex, 1);
-  //   });
-});
+const root =
+  instance?.parent?.type.__name == "CtxAnimated" || (inject("root") as boolean);
 </script>
+
 <template>
-  <CtxOptions :props="{ ...props, type: 'action' }" :root="!!contextOption">
-    <slot />
+  <CtxOptions :props="props" :root="root">
+    <template v-for="(_, name) in $slots" v-slot:[name]="data">
+      <slot :name="name" v-bind="data" />
+    </template>
   </CtxOptions>
 </template>

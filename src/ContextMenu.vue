@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { handleContextMenu } from "@/behaviours/handleContextMenu";
 import { onMounted, ref, watch, provide } from "vue";
-import type { ExplorerOptions } from "@/types";
+import type { Options } from "@/types";
 import { normalizeArea } from "@/utils";
 import Ctx from "@/CtxAnimated.vue";
 import { useContextMenu } from "@/store";
-import { normalizeOptions } from "./utils/normalizeOptions";
+import { normalizeOptions } from "@/utils/normalizeOptions";
+import { defaultTheme } from "@/constants";
 
-const props = defineProps<ExplorerOptions>();
+const props = defineProps<Options>();
 const ctxMenuRef = ref<{
   elm: HTMLElement;
 }>();
@@ -54,10 +55,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Ctx ref="ctxMenuRef">
+  <Ctx :theme="theme || defaultTheme" ref="ctxMenuRef">
     <slot />
-    <!-- <template v-for="(_, name) in $slots" v-slot:[name]="data">
-      <slot :name="name" v-bind="data"></slot>
-    </template> -->
   </Ctx>
 </template>

@@ -9,3 +9,7 @@ export const defaultOptions = {
   options: null,
   normalized: false,
 };
+
+export const unusableSlotNames = ["Icon", "Label", "Hotkey", "Check"];
+
+export const defaultTheme = "dark";

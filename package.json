@@ -12,7 +12,7 @@
       "import": "./dist/Components.es.js",
       "types": "./dist/Components.d.ts"
     },
-    "./style.css": {
+    "./styles.css": {
       "import": "./dist/style.css"
     }
   },
