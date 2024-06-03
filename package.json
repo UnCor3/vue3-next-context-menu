@@ -13,7 +13,7 @@
       "types": "./dist/Components.d.ts"
     },
     "./styles.css": {
-      "import": "./dist/style.css"
+      "import": "./dist/styles.css"
     }
   },
   "module": "dist/index.es.js",
@@ -28,12 +28,11 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "vite-require": "^0.2.3",
     "vue": "^3.4.21"
   },
   "peerDependencies": {
     "@popperjs/core": "^2.11.8",
-    "vue": "^3.4.21"
+    "vue": "3.x"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

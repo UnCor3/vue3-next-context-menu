@@ -11,7 +11,7 @@ import {
   toBeFalsy,
 } from "vitest";
 
-import App from "../App.vue";
+import App from "./App.vue";
 import { useContextMenu } from "../store.ts";
 
 beforeEach(() => {

@@ -8,7 +8,6 @@ import path from "path";
 export default defineConfig({
   base: "./",
   build: {
-    // target: "esnext",
     lib: {
       entry: [
         path.resolve(__dirname, "src/index.ts"),
@@ -22,6 +21,12 @@ export default defineConfig({
     rollupOptions: {
       external: ["vue", "@popperjs/core", "@popperjs/core/lib/modifiers"],
       output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === "style.css") {
+            return "styles.css";
+          }
+          return assetInfo.name!;
+        },
         globals: {
           vue: "Vue",
           "@popperjs/core": "@popperjs/core",

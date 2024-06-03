@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { ContextOption, ContextGroup, ContextMenu } from "./Components";
+//@ts-nocheck
+import {
+  ContextOption,
+  ContextGroup,
+  ContextMenu,
+} from "../../dist/Components.es.js";
+import "../../dist/styles.css";
 import RewindSvg from "@/icons/Rewind.svg?raw";
 import CutSvg from "@/icons/Cut.svg?raw";
 import MuteSvg from "@/icons/Mute.svg?raw";
