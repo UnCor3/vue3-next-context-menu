@@ -13,7 +13,7 @@
         <slot :name="name" v-bind="data" />
       </template>
     </OptionAttrs>
-    <Teleport to=".vue-3-context-hover-menus" v-if="root">
+    <Teleport to=".vue3-context-hover-menus" v-if="root">
       <ul
         ref="ulRef"
         class="hover-menu"
@@ -61,12 +61,13 @@
         v-if="!props.parentSlot"
       />
       <slot v-else :name="props.parentSlot" />
-      <Teleport to=".vue-3-context-hover-menus">
+      <Teleport to=".vue3-context-hover-menus">
         <ul
           class="hover-menu"
           :class="{
             'no-child': !props.childSlot,
           }"
+          style="display: none"
           ref="ulRef"
         >
           <slot v-if="props.childSlot" :name="props.childSlot" />
@@ -77,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { createPopper } from "@popperjs/core";
 import { useContextMenu } from "@/store";
 import type { Action } from "@/types";
@@ -100,7 +101,6 @@ const neededClasses = computed(() => ({
   clickable:
     //@ts-ignore does not exist on group but undefined is falsy
     props.type === "slot" ? props.childSlot : noChild.value && !props.disabled,
-  //todo need a better iplementation
   root,
   //@ts-ignore does not exist on group but undefined is falsy
   disabled: props.disabled,
@@ -117,11 +117,8 @@ const handleClick = () => {
 };
 
 onMounted(() => {
-  //todo is this needed ?
   if (!liRef.value || !ulRef.value) return;
   if (ulRef.value.children.length > 0) noChild.value = false;
-
-  ulRef.value!.style.display = "none";
 
   root &&
     watch(
@@ -139,7 +136,7 @@ onMounted(() => {
     watch(
       () => state.value.isOpen,
       (isOpen) => {
-        // console.log(isOpen);
+        hide();
         if (!isOpen && shouldShow.value) {
           ulRef.value!.removeAttribute("data-show");
           shouldShow.value = false;
@@ -151,16 +148,18 @@ onMounted(() => {
   const popperInstance = createPopper(
     liRef.value,
     ulRef.value!,
-    state.value.popperOptions as any
+    //@ts-ignore will be defined once the component is mounted
+    state.value.options!.popperOptions
   );
   function show() {
+    //@ts-ignore as it is an internal property
+    state.value.__ignoreBlur = true;
+
+    //@ts-ignore
+    if (props.disabled && !props.openHoverMenuWhenDisabled) return;
     if (!noChild.value) {
       ulRef.value!.style.display = "block";
     }
-    // if (props.type === "slot" && !props.childSlot) {
-    //   shouldShow.value = true;
-    //   return;
-    // }
     if (root) {
       state.value.currentAction = props;
     }
@@ -177,6 +176,10 @@ onMounted(() => {
   }
 
   function hide() {
+    //@ts-ignore as it is an internal property
+    state.value.__ignoreBlur = false;
+    //need this to refire the blur event
+    state.value.ctxRef!.focus();
     if (root) return;
     ulRef.value!.style.display = "none";
     ulRef.value!.removeAttribute("data-show");
@@ -195,20 +198,36 @@ onMounted(() => {
 });
 </script>
 
-//todo does it need to be scoped ?
 <style lang="scss">
-.vue-3-context-menu,
-.vue-3-context-hover-menus {
+.vue3-context-menu,
+.vue3-context-hover-menus {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  ul {
+    list-style: none;
+  }
+
   &.light {
     .context-option {
       .hotkey {
         background-color: black;
         color: rgb(255, 255, 255);
       }
+
+      &.highlight {
+        animation: highlight-light 0.5s linear;
+      }
     }
     .group {
       border-top: 1px solid rgba(0, 0, 0, 0.25);
       border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+      &.highlight {
+        animation: highlight-light 0.5s linear;
+      }
     }
   }
 
@@ -218,10 +237,17 @@ onMounted(() => {
         background-color: white;
         color: rgba(0, 0, 0, 0.685);
       }
+
+      &.highlight {
+        animation: highlight-dark 0.5s linear;
+      }
     }
     .group {
       border-top: 1px solid rgba(255, 255, 255, 0.555);
       border-bottom: 1px solid rgba(255, 255, 255, 0.555);
+      &.highlight {
+        animation: highlight-dark 0.5s linear;
+      }
     }
   }
 
@@ -340,12 +366,13 @@ onMounted(() => {
         text-align: center;
         background-color: transparent;
         font-size: 0.55rem;
+        left: 0;
       }
     }
   }
 }
-
-.vue-3-context-hover-menus {
+//todo
+.vue3-context-hover-menus {
   z-index: 99999999;
   .hover-menu {
     /* display: none; */
@@ -373,7 +400,7 @@ onMounted(() => {
   }
 }
 
-@keyframes highlight {
+@keyframes highlight-dark {
   0% {
     background-color: rgba(255, 255, 255, 0.1);
   }
@@ -385,6 +412,24 @@ onMounted(() => {
   }
   75% {
     background-color: rgba(255, 255, 255, 1);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes highlight-light {
+  0% {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  25% {
+    background-color: rgb(0, 0, 0);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  75% {
+    background-color: rgb(0, 0, 0);
   }
   100% {
     background-color: rgba(255, 255, 255, 0);

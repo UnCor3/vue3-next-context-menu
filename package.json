@@ -23,22 +23,30 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest --environment jsdom"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "sass": "^1.77.2",
+    "vite-require": "^0.2.3",
     "vue": "^3.4.21"
   },
   "peerDependencies": {
+    "@popperjs/core": "^2.11.8",
     "vue": "^3.4.21"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^14.12.0",
+    "jsdom": "^24.1.0",
+    "sass": "^1.77.4",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-dts": "^3.9.1",
+    "vite-plugin-require": "^1.2.14",
+    "vitest": "^1.6.0",
     "vue-tsc": "^2.0.6"
   }
 }

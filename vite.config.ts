@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import vitePluginRequire from "vite-plugin-require";
 import dts from "vite-plugin-dts";
 import path from "path";
 
@@ -7,6 +8,7 @@ import path from "path";
 export default defineConfig({
   base: "./",
   build: {
+    // target: "esnext",
     lib: {
       entry: [
         path.resolve(__dirname, "src/index.ts"),
@@ -33,5 +35,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  plugins: [vue(), dts({})],
+  plugins: [
+    vue(),
+    dts({}), //@ts-ignore
+    vitePluginRequire.default(),
+  ],
 });

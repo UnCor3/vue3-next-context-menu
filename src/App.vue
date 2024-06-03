@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import ContextMenu from "./ContextMenu.vue";
-import ContextOption from "@/components/ContextOption.dev.vue";
-import { ContextGroup } from "./Components";
+import { ContextOption, ContextGroup, ContextMenu } from "./Components";
+import { useContextMenu } from "@/index";
 import RewindSvg from "@/icons/Rewind.svg?raw";
 import CutSvg from "@/icons/Cut.svg?raw";
 import MuteSvg from "@/icons/Mute.svg?raw";
 import { ref } from "vue";
 import { Action } from "@/types";
 
+const ctx = useContextMenu();
+setTimeout(() => {
+  // ctx.api.highlight("Video Controls", "last");
+  console.log(ctx.state.value);
+}, 1000);
+//@ts-ignore
 const testProps = ref<Action>({
   type: "action",
   label: "Test2111",
@@ -25,7 +30,6 @@ const testProps = ref<Action>({
   <ContextMenu theme="light">
     <ContextOption
       :props="{
-        type: 'action',
         label: 'Back',
         init: () => console.log('Test'),
         preserveIconSpace: true,
@@ -69,44 +73,22 @@ const testProps = ref<Action>({
           icon: RewindSvg,
         }"
       >
-        <ContextGroup
+        <ContextOption
           :props="{
-            type: 'group',
-            label: 'Test11',
+            label: 'Testzzz',
+            type: 'action',
+            init: () => console.log('Test'),
+            disabled: true,
           }"
-        >
-          <ContextOption
-            :props="{
-              type: 'action',
-              label: 'Test5',
-              init: () => console.log('Test'),
-              disabled: false,
-            }"
-          /><ContextOption
-            :props="{
-              type: 'action',
-              label: 'Test6',
-              init: () => console.log('Test'),
-              disabled: false,
-            }"
-          >
-            <ContextGroup
-              :props="{
-                type: 'group',
-                label: 'Test1123112',
-              }"
-            >
-              <ContextOption
-                :props="{
-                  type: 'action',
-                  label: 'Test7',
-                  init: () => console.log('Test'),
-                  disabled: false,
-                }"
-              />
-            </ContextGroup>
-          </ContextOption>
-        </ContextGroup>
+        />
+        <ContextOption
+          :props="{
+            label: 'Testzz1',
+            type: 'action',
+            init: () => console.log('Test'),
+            disabled: true,
+          }"
+        />
       </ContextOption>
       <ContextOption
         :props="{
@@ -130,25 +112,26 @@ const testProps = ref<Action>({
         }"
       />
     </ContextGroup>
+
     <ContextOption
       :props="{
         label: 'Test12131',
         type: 'action',
         init: () => console.log('Test'),
+        openHoverMenuWhenDisabled: true,
         disabled: true,
       }"
     >
-      <template #Icon>
-        <div>Icon</div>
-      </template>
-      <template #Label>
-        <div>Label</div>
-      </template>
-      <template #Hotkey>
-        <div>Hotkey</div>
-      </template>
+      <ContextOption
+        :props="{
+          label: 'Testzz121z',
+          type: 'action',
+          init: () => console.log('Test'),
+          disabled: true,
+        }"
+      />
     </ContextOption>
-    <ContextOption
+    <!-- <ContextOption
       :props="{
         type: 'slot',
         parentSlot: 'Test',
@@ -158,16 +141,7 @@ const testProps = ref<Action>({
       <template #Test>
         <div>Hello from slot</div>
       </template>
-    </ContextOption>
-    <ContextOption :props="testProps">
-      <!-- <ContextOption
-        :props="{
-          type: 'action',
-          label: 'Test2111asd',
-          init: (props) => console.log(props),
-        }"
-      /> -->
-    </ContextOption>
+    </ContextOption> -->
   </ContextMenu>
 </template>
 
@@ -177,14 +151,5 @@ body {
   height: 100vh;
   background-color: white;
   font-family: "Nanum Gothic", sans-serif;
-}
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-ul {
-  list-style: none;
 }
 </style>

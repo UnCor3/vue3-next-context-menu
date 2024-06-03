@@ -1,3 +1,4 @@
-//TODO make sure does not execute on server side rendering
-export const remToPx = (rem: number) =>
-  rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+export const remToPx = (rem: number) => {
+  if (typeof window === "undefined") return 0;
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+};

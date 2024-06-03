@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { logWarn, checkIfValid } from "@/helpers";
 import { inject, getCurrentInstance } from "vue";
 import { unusableSlotNames } from "@/constants";
 import CtxOptions from "@/CtxOptions.vue";
 import { Action } from "@/types";
-import { logWarn } from "@/helpers";
 
 const { props } = defineProps<{
   props: Action;
@@ -11,8 +11,11 @@ const { props } = defineProps<{
 
 const instance = getCurrentInstance();
 
+checkIfValid(props);
+
 const root =
-  instance?.parent?.type.__name == "CtxAnimated" || (inject("root") as boolean);
+  instance?.parent?.type.__name == "CtxAnimated" ||
+  (inject("root", false) as boolean);
 
 const isBadSlotName =
   props.type === "slot" &&
@@ -20,7 +23,7 @@ const isBadSlotName =
 
 if (isBadSlotName)
   logWarn(
-    "You are using a reserved slot name with a slot type action. This will not work as expected."
+    `You are using a reserved slot name with a slot type action label was ${props.label}. This will not work as expected.`
   );
 
 const slotNames = Object.keys(instance!.slots);
@@ -33,7 +36,8 @@ if (slotNames.includes("default") && props.switch) {
 </script>
 
 <template>
-  <CtxOptions :props="props" :root="root">
+  <!-- @vue-expect-error ts thinks it's smart -->
+  <CtxOptions :props="{ type: 'action', ...props }" :root="!!root">
     <!-- @vue-expect-error -->
     <template
       v-for="name in slotNames.filter((s) =>

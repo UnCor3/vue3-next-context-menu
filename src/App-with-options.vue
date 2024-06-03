@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import ContextMenu from "./ContextMenu.vue";
 import Test from "./Test.vue";
 import ContextOption from "@/components/ContextOption.vue";
 import ContextGroup from "./components/ContextGroup.vue";

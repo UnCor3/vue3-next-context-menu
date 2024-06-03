@@ -1,3 +1,6 @@
+import { Options as PopperOptions } from "@popperjs/core";
+import { ref } from "vue";
+
 export type ActionChild = {
   /**
    * The label of the action must be unique, will be used as a key and to display in the context menu
@@ -30,7 +33,7 @@ export type ActionChild = {
   };
   /**
    * The icon to be displayed in the context menu
-   * you can either make an raw import of an svg or pass the svg as string it'll be parsed to html
+   * you can either make an raw import of an svg or pass the svg as string it'll be parsed to html or just pass a slot for Icon check the docs for more info
    * @example import Svg from "@/assets/icon.svg?raw"
    */
   icon?: string;
@@ -46,12 +49,11 @@ export type ActionChild = {
   switch?: {
     isActive: boolean;
   };
+  openHoverMenuWhenDisabled?: boolean;
 };
 export type ActionGroup = {
   label: string;
-  children?: Action[];
-  //ts todo
-  type: "group";
+  type?: "group";
   showLabel?: boolean;
 };
 export type Slotname = {
@@ -83,10 +85,6 @@ export type Action = ActionChild | ActionGroup | Slotname;
 export type NavigationType = "click" | "hover";
 export type CtxState = {
   /**
-   * Access all the actions in the context menu, any kind of manipulation can be done here
-   */
-  actions: Action[];
-  /**
    * The x position of the context menu
    */
   x: number;
@@ -95,21 +93,38 @@ export type CtxState = {
    */
   y: number;
   /**
-   * The slot to be used for the context menu
-   */
-  slot?: string;
-  /**
    * Is the context menu open or not
    */
   isOpen: boolean;
-  popperOptions: Options | null;
   /**
    * The current action that is being hovered on can be helpful for analytics etc
    */
   currentAction: Action | null;
-  options: Options | null;
-  normalized: boolean;
+  /**
+   * Passed options
+   */
+  options: InternalOptions | {};
+  /**
+   * Ref to the context menu element will be defined once mounted
+   */
+  ctxRef: HTMLElement | null;
+  /**
+   * Internal property do not set it to something else
+   */
+  readonly __ignoreBlur: boolean;
+  /**
+   * Internal property do not set it to something else
+   */
+
+  readonly __destroyed: boolean;
 };
+
+export type InternalOptions = {
+  area: HTMLElement;
+  popperOptions: PopperOptions;
+  theme: "light" | "dark";
+};
+
 export type Options = {
   /**
    * The area to which the context menu will be attached
@@ -118,10 +133,6 @@ export type Options = {
    * @default document.body
    */
   area?: HTMLElement | string;
-  /**
-   * The main actions to be displayed in the context menu all the time
-   */
-  actions?: Action[];
   /**
    * Popper.js options can be adjusted here, you will also get the current config so you can write on top
    * Without any config this package uses
@@ -140,10 +151,12 @@ export type Options = {
    *   placement: "right-start",
    * }
    */
-  popperOptions?: Options;
+  popperOptions?: (defaultOptions: PopperOptions) => PopperOptions;
   /**
    * The theme of the context menu
    * @default "dark"
    */
   theme?: "light" | "dark";
 };
+
+export type CtxRef = ReturnType<typeof ref<CtxState>>;

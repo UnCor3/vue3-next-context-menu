@@ -1,14 +1,15 @@
+import type { CtxState } from "@/types";
+
 export const defaultOptions = {
   isOpen: false,
   x: 0,
   y: 0,
-  actions: [],
-  //initializing as null to prevent errors in server side
-  popperOptions: null,
   currentAction: null,
-  options: null,
-  normalized: false,
-};
+  options: {},
+  ctxRef: null,
+  __destroyed: false,
+  __ignoreBlur: false,
+} as CtxState;
 
 export const unusableSlotNames = ["Icon", "Label", "Hotkey", "Check"];
 

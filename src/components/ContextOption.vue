@@ -10,12 +10,22 @@ const { props } = defineProps<{
 const instance = getCurrentInstance();
 
 const root =
-  instance?.parent?.type.__name == "CtxAnimated" || (inject("root") as boolean);
+  instance?.parent?.type.__name == "CtxAnimated" ||
+  (inject("root", false) as boolean);
+
+const slotNames = Object.keys(instance!.slots);
 </script>
 
 <template>
-  <CtxOptions :props="props" :root="root">
-    <template v-for="(_, name) in $slots" v-slot:[name]="data">
+  <!-- @vue-expect-error ts thinks it's smart -->
+  <CtxOptions :props="{ type: 'action', ...props }" :root="root">
+    <!-- @vue-expect-error -->
+    <template
+      v-for="name in slotNames.filter((s) =>
+        props.switch ? s !== 'default' : s
+      )"
+      v-slot:[name]="data"
+    >
       <slot :name="name" v-bind="data" />
     </template>
   </CtxOptions>

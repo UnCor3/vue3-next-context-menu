@@ -1,6 +1,6 @@
 <template>
-  <div class="vue-3-context-hover-menus" :class="theme" />
-  <div class="vue-3-context-menu" :class="theme">
+  <div class="vue3-context-hover-menus" :class="theme" />
+  <div class="vue3-context-menu" :class="theme">
     <ul
       class="context-menu"
       tabindex="-1"
@@ -18,11 +18,15 @@
   </div>
 </template>
 <script setup lang="ts">
+import { handleContextMenu } from "@/behaviours/handleContextMenu";
+import { ref, computed, watch, onMounted } from "vue";
 import { useContextMenu } from "@/store";
-import { ref, computed } from "vue";
+import { normalizeArea } from "@/utils";
+
 const props = defineProps<{
   theme: "light" | "dark";
 }>();
+const ctxRef = ref<HTMLElement>();
 const { state } = useContextMenu();
 
 const theme = computed(() => {
@@ -32,26 +36,39 @@ const theme = computed(() => {
   return { light: true };
 });
 
-const ctxRef = ref<HTMLElement>();
-defineExpose({
-  elm: ctxRef,
+onMounted(() => {
+  if (!ctxRef.value) return;
+  let { area } = normalizeArea(props);
+  area.addEventListener("contextmenu", handleContextMenu(ctxRef.value));
+  //@ts-ignore
+  state.value.options.area = area;
+  state.value.ctxRef = ctxRef.value;
+  ctxRef.value.addEventListener("blur", () => {
+    if (!state.value.__ignoreBlur) {
+      state.value.isOpen = false;
+    }
+  });
+
+  watch(
+    () => state.value.isOpen,
+    (isOpen) => {
+      if (isOpen) {
+        ctxRef.value!.focus();
+      }
+    },
+    { immediate: true }
+  );
 });
 </script>
 
-<style>
-.vue-3-context-menu {
-  /* color: white !important; */
-}
-</style>
-
 <style lang="scss">
 @mixin box-shadow {
-  -webkit-box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.5);
-  box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.5);
 }
 
-.vue-3-context-menu {
+.vue3-context-menu {
   &.light {
     .context-menu {
       background-color: white;
@@ -110,7 +127,7 @@ defineExpose({
   }
 }
 
-.vue-3-context-hover-menus {
+.vue3-context-hover-menus {
   &.dark {
     .hover-menu {
       background-color: black;

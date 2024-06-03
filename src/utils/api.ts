@@ -1,32 +1,28 @@
-import { useContextMenu } from "@/store";
+import type { CtxRef } from "@/types";
 
-const { state } = useContextMenu();
-
-//REFACTOR
-class ContextApiHandler {
-  state: any;
+export class ContextApiHandler {
+  private state: CtxRef;
   constructor(state: any) {
     this.state = state;
   }
 
   close() {
-    state.value.isOpen = false;
+    this.state.value!.isOpen = false;
   }
   open() {
-    state.value.isOpen = true;
+    this.state.value!.isOpen = true;
   }
   openAt(x: number, y: number) {
-    state.value.x = x;
-    state.value.y = y;
-    state.value.isOpen = true;
+    this.state.value!.x = x;
+    this.state.value!.y = y;
+    this.state.value!.isOpen = true;
   }
   toggle() {
-    state.value.isOpen = !state.value.isOpen;
+    this.state.value!.isOpen = !this.state.value!.isOpen;
   }
-  //todo
-  //is this the right way to do it?
   destroy() {
-    state.value.actions = [];
+    // @ts-ignore as it's an internal property
+    this.state.value!.__destroyed = true;
   }
   highlight: HighlightFunc = (label: string, at, forceOpen = true) => {
     //to make typescript happy
@@ -47,7 +43,6 @@ class ContextApiHandler {
     }
 
     const elm = document.querySelector(`[data-label="${label}"]`);
-    console.log(elm);
     elm?.classList.add("highlight");
     setTimeout(() => {
       elm?.classList.remove("highlight");
@@ -66,12 +61,3 @@ type HighlightFunc = (
       },
   forceOpen?: boolean
 ) => void;
-
-let api: ContextApiHandler;
-
-export const handleContextApi = (ref: any) => {
-  if (!api) {
-    api = new ContextApiHandler(ref);
-  }
-  return api;
-};

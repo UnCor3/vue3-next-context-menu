@@ -1,5 +1,5 @@
 <template>
-  <CtxOptions :props="props" :root="root">
+  <CtxOptions :props="{ type: 'group', ...props }" :root="root">
     <slot />
   </CtxOptions>
 </template>

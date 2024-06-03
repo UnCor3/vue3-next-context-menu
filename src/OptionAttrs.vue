@@ -35,13 +35,19 @@
   <span v-if="doesExist(Object.keys($slots), 'Hotkey')">
     <slot name="Hotkey" />
   </span>
-  <span v-else-if="props.type !== 'group' && props.hotkey" class="hotkey">
-    <template v-if="props.hotkey.mac">
-      <Command v-if="props.hotkey.mac === 'command'" />
+  <span v-else-if="//@ts-ignore
+  props.type !== 'group' && props.hotkey" class="hotkey">
+    <template v-if="//@ts-ignore
+    props.hotkey.mac">
+      <Command v-if="//@ts-ignore
+      props.hotkey.mac === 'command'" />
 
-      <Alt v-if="props.hotkey.mac === 'alt'" />
+      <Alt v-if="//@ts-ignore
+      props.hotkey.mac === 'alt'" />
     </template>
-    {{ props.hotkey.combination }}</span
+    {{ 
+    //@ts-ignore
+    props.hotkey.combination }}</span
   >
 
   <!-- @vue-expect-error // not important as it will be undefined-->

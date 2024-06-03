@@ -4,6 +4,12 @@ export const handleContextMenu = (ctxMenuElm: HTMLElement) => {
   const { state } = useContextMenu();
 
   return (e: MouseEvent) => {
+    //need this for the blur event to work it does not auto focus to the ctx menu
+    //unless it's hovered on or clicked etc
+    setTimeout(() => {
+      ctxMenuElm.focus();
+    }, 0);
+
     e.preventDefault();
     e.stopPropagation();
 
