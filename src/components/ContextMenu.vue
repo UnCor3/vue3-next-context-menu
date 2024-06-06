@@ -1,22 +1,45 @@
 <script setup lang="ts">
-import { provide } from "vue";
+import { useContextMenu, setInstance, instances } from "@/store";
+import { normalizeOptions } from "@/utils/normalizeOptions";
+import { provide, onMounted, watch, ref, inject } from "vue";
+import { defaultInstanceName } from "@/constants";
 import type { Options } from "@/types";
 import Ctx from "@/CtxAnimated.vue";
-import { useContextMenu } from "@/store";
-import { normalizeOptions } from "@/utils/normalizeOptions";
-import { defaultTheme } from "@/constants";
 
-const props = defineProps<Options>();
+const props = withDefaults(defineProps<Options>(), {
+  overflowProtection: true,
+  id: "default",
+});
 
-const { state } = useContextMenu();
+const shouldRender = ref(true);
+
+if (instances[defaultInstanceName]) {
+  // logWarn(
+  //   "You are trying to use multiple ContextMenu components in the same app. This library is not tested for this use case, open an issue if want this feature"
+  // );
+} else if (props.id) {
+  setInstance(props.id);
+}
 
 normalizeOptions(props);
 
 provide("isCtxMenu", true);
+
+onMounted(() => {
+  //seems to be the ony way to watch for destroyed
+  watch(
+    () =>
+      useContextMenu(inject("instanceId", "default")).state.value!.__destroyed,
+
+    (render) => {
+      shouldRender.value = !render;
+    }
+  );
+});
 </script>
 
 <template>
-  <Ctx :theme="theme || defaultTheme" v-if="!state.__destroyed">
+  <Ctx :area="props.area" v-if="shouldRender">
     <slot />
   </Ctx>
 </template>

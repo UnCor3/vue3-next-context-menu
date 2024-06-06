@@ -1,21 +1,33 @@
 <script setup lang="ts">
-import { logWarn, checkIfValid } from "@/helpers";
-import { inject, getCurrentInstance } from "vue";
+import { logWarn, logError, checkIfValid } from "@/helpers";
+import { inject, getCurrentInstance, provide } from "vue";
 import { unusableSlotNames } from "@/constants";
 import CtxOptions from "@/CtxOptions.vue";
 import { Action } from "@/types";
+import { useContextMenu } from "@/store";
 
 const { props } = defineProps<{
   props: Action;
 }>();
 
-const instance = getCurrentInstance();
+const { state } = useContextMenu(inject("instanceId", "default"));
 
-checkIfValid(props);
+const parentDepth = inject("depth", 0);
+const depth = parentDepth + 1;
+const instance = getCurrentInstance();
+provide("depth", depth);
 
 const root =
   instance?.parent?.type.__name == "CtxAnimated" ||
-  (inject("root", false) as boolean);
+  ((inject("root", false) as Boolean) && depth < 2);
+
+if (depth > 2 && state.value!.overflowProtection) {
+  logError(`
+    You are trying to go more than 2 levels deep, with overflowProtection enabled this cannot be done. Pass overflowProtection: false to the ContextMenu component in order to go more than 2 levels deep, label was ${props.label}.
+  `);
+}
+
+checkIfValid(props);
 
 const isBadSlotName =
   props.type === "slot" &&

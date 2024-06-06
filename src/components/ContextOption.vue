@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, getCurrentInstance } from "vue";
+import { inject, getCurrentInstance, provide } from "vue";
 import CtxOptions from "@/CtxOptions.vue";
 import { Action } from "@/types";
 
@@ -7,11 +7,14 @@ const { props } = defineProps<{
   props: Action;
 }>();
 
+const parentDepth = inject("depth", 0);
+const depth = parentDepth + 1;
 const instance = getCurrentInstance();
+provide("depth", depth);
 
 const root =
   instance?.parent?.type.__name == "CtxAnimated" ||
-  (inject("root", false) as boolean);
+  ((inject("root", false) as Boolean) && depth < 2);
 
 const slotNames = Object.keys(instance!.slots);
 </script>

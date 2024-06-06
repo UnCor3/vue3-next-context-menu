@@ -1,7 +1,8 @@
 import { useContextMenu } from "@/store";
+import { inject } from "vue";
 
 export const handleContextMenu = (ctxMenuElm: HTMLElement) => {
-  const { state } = useContextMenu();
+  const { state } = useContextMenu(inject("instanceId", "default"));
 
   return (e: MouseEvent) => {
     //need this for the blur event to work it does not auto focus to the ctx menu
@@ -11,7 +12,6 @@ export const handleContextMenu = (ctxMenuElm: HTMLElement) => {
     }, 0);
 
     e.preventDefault();
-    e.stopPropagation();
 
     const { height } = ctxMenuElm.getBoundingClientRect();
     const offsetWidth = ctxMenuElm.offsetWidth;
@@ -30,7 +30,7 @@ export const handleContextMenu = (ctxMenuElm: HTMLElement) => {
         : e.clientX;
 
     state.value = {
-      ...state.value,
+      ...state.value!,
       isOpen: true,
       x,
       y,

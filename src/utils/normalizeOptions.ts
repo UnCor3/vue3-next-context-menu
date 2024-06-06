@@ -5,12 +5,13 @@ import { remToPx } from "@/helpers";
 import { defaultTheme } from "@/constants";
 import { useContextMenu } from "@/store";
 import { logError } from "@/helpers";
+import { isRef } from "vue";
 
 const isElm = (elm: any) =>
   elm instanceof HTMLElement || elm instanceof Element;
 
 export function normalizeOptions(options: Options) {
-  const { state } = useContextMenu();
+  const { state } = useContextMenu(options.id);
   const offsetModifier = {
     name: "offset",
     options: {
@@ -24,12 +25,18 @@ export function normalizeOptions(options: Options) {
     placement: "right-start",
   } as PopperOptions;
 
-  state.value.options = {
-    area: options.area,
-    theme: options.theme || defaultTheme,
-    popperOptions: options.popperOptions
-      ? options.popperOptions(popperOptions)
-      : popperOptions,
+  const { overflowProtection } = options;
+
+  state.value = {
+    ...state.value!,
+    instanceId: options.id!,
+    overflowProtection,
+    options: {
+      theme: options.theme || defaultTheme,
+      popperOptions: options.popperOptions
+        ? options.popperOptions(popperOptions)
+        : popperOptions,
+    },
   };
 }
 
@@ -39,6 +46,10 @@ export function normalizeArea(options: Options) {
     const _elm = document.querySelector(options.area) as HTMLElement;
     if (!isElm(_elm)) return logError("Given area is not a valid HTMLElement");
     elm = _elm;
+  } else if (isRef(options.area)) {
+    //todo
+    console.log("yes ref");
+    elm = options.area.value;
   } else if (options.area) {
     if (!isElm(options.area)) {
       return logError("Given area is not a valid HTMLElement");

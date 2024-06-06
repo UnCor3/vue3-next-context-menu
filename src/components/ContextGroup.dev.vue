@@ -4,8 +4,8 @@
   </CtxOptions>
 </template>
 <script setup lang="ts">
-import { getCurrentInstance, provide, onMounted, inject } from "vue";
-import { checkIfValid, logError, logWarn } from "@/helpers";
+import { getCurrentInstance, provide, inject } from "vue";
+import { checkIfValid, logError } from "@/helpers";
 import CtxOptions from "@/CtxOptions.vue";
 import { ActionGroup } from "@/types";
 
@@ -27,13 +27,4 @@ if (isInsideAGroup) {
 }
 
 provide("root", !!root);
-
-onMounted(() => {
-  const noChildren = !instance!.subTree.children;
-  if (noChildren) {
-    logWarn(
-      `There was no child passed to ContextGroup with label: ${props.label}`
-    );
-  }
-});
 </script>

@@ -1,14 +1,18 @@
 <template>
-  <div class="vue3-context-hover-menus" :class="theme" />
-  <div class="vue3-context-menu" :class="theme">
+  <div
+    class="vue3-context-hover-menus"
+    :data-instance-id="instanceId"
+    :class="theme"
+  />
+  <div class="vue3-context-menu" :class="theme" :data-instance-id="instanceId">
     <ul
       class="context-menu"
       tabindex="-1"
-      :class="{ visible: state.isOpen }"
+      :class="{ visible: state!.isOpen }"
       ref="ctxRef"
       :style="{
-        left: state.x + 'px',
-        top: state.y + 'px',
+        left: state!.x + 'px',
+        top: state!.y + 'px',
       }"
     >
       <div style="position: relative">
@@ -19,18 +23,23 @@
 </template>
 <script setup lang="ts">
 import { handleContextMenu } from "@/behaviours/handleContextMenu";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, inject } from "vue";
 import { useContextMenu } from "@/store";
 import { normalizeArea } from "@/utils";
+import type { Options } from "@/types";
 
 const props = defineProps<{
-  theme: "light" | "dark";
+  area: Options["area"];
 }>();
 const ctxRef = ref<HTMLElement>();
-const { state } = useContextMenu();
+const instanceId = inject("instanceId", "default");
+const { state } = useContextMenu(instanceId);
+
+console.log("hit ctx animated");
 
 const theme = computed(() => {
-  if (props.theme === "dark") {
+  //@ts-ignore
+  if (state.value.options.theme === "dark") {
     return { dark: true };
   }
   return { light: true };
@@ -39,25 +48,28 @@ const theme = computed(() => {
 onMounted(() => {
   if (!ctxRef.value) return;
   let { area } = normalizeArea(props);
-  area.addEventListener("contextmenu", handleContextMenu(ctxRef.value));
+  const handlerFunction = handleContextMenu(ctxRef.value);
+  area.addEventListener("contextmenu", handlerFunction);
   //@ts-ignore
-  state.value.options.area = area;
-  state.value.ctxRef = ctxRef.value;
-  ctxRef.value.addEventListener("blur", () => {
-    if (!state.value.__ignoreBlur) {
-      state.value.isOpen = false;
+  state.value!.options.area = area;
+  state.value!.ctxRef = ctxRef.value;
+  const blurHandler = () => {
+    if (!state.value!.__ignoreBlur) {
+      state.value!.isOpen = false;
+      document
+        .querySelectorAll(".vue3-context-hover-menus > [data-after-root]")
+        .forEach((el) => {
+          el.removeAttribute("data-show");
+        });
     }
-  });
+  };
+  ctxRef.value.addEventListener("blur", blurHandler);
 
-  watch(
-    () => state.value.isOpen,
-    (isOpen) => {
-      if (isOpen) {
-        ctxRef.value!.focus();
-      }
-    },
-    { immediate: true }
-  );
+  onUnmounted(() => {
+    if (!ctxRef.value || !area) return;
+    area.removeEventListener("contextmenu", handlerFunction);
+    ctxRef.value.removeEventListener("blur", blurHandler);
+  });
 });
 </script>
 

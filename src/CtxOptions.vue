@@ -13,12 +13,18 @@
         <slot :name="name" v-bind="data" />
       </template>
     </OptionAttrs>
-    <Teleport to=".vue3-context-hover-menus" v-if="root">
+    <Teleport
+      :to="`.vue3-context-hover-menus[data-instance-id=${instanceId}]`"
+      v-if="root"
+    >
       <ul
         ref="ulRef"
         class="hover-menu"
+        :data-after-root="true"
+        :data-label="props.label"
         :class="{
           'no-child': noChild,
+          overflow: state!.overflowProtection,
         }"
       >
         <slot name="default" />
@@ -28,6 +34,7 @@
       v-else
       ref="ulRef"
       class="hover-menu"
+      :data-label="props.label"
       :class="{
         'no-child': noChild,
       }"
@@ -61,30 +68,49 @@
         v-if="!props.parentSlot"
       />
       <slot v-else :name="props.parentSlot" />
-      <Teleport to=".vue3-context-hover-menus">
+      <Teleport
+        :to="`.vue3-context-hover-menus[data-instance-id=${instanceId}]`"
+        v-if="root"
+      >
         <ul
           class="hover-menu"
           :class="{
             'no-child': !props.childSlot,
+            overflow: state!.overflowProtection,
           }"
+          :data-after-root="root ? true : undefined"
           style="display: none"
           ref="ulRef"
         >
           <slot v-if="props.childSlot" :name="props.childSlot" />
         </ul>
       </Teleport>
+      <ul
+        v-else
+        class="hover-menu"
+        :class="{
+          'no-child': !props.childSlot,
+          overflow: state!.overflowProtection,
+        }"
+        :data-after-root="root ? true : undefined"
+        style="display: none"
+        ref="ulRef"
+      >
+        <slot v-if="props.childSlot" :name="props.childSlot" />
+      </ul>
     </li>
   </template>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, onUnmounted, inject } from "vue";
 import { createPopper } from "@popperjs/core";
 import { useContextMenu } from "@/store";
 import type { Action } from "@/types";
 import OptionAttrs from "@/OptionAttrs.vue";
 
-const { state } = useContextMenu();
+const instanceId = inject("instanceId", "default");
+const { state } = useContextMenu(instanceId);
 const liRef = ref<HTMLElement>();
 const ulRef = ref<HTMLElement>();
 const shouldShow = ref(false);
@@ -108,43 +134,30 @@ const neededClasses = computed(() => ({
 
 const handleClick = () => {
   //@ts-ignore
-  if (props.disabled) return;
+  if (props.disabled || !props.init) return;
   //@ts-ignore
   const shouldClose = props.init(props);
   if (!shouldClose) {
-    state.value.isOpen = false;
+    state.value!.isOpen = false;
   }
 };
 
 onMounted(() => {
+  if (props.type == "group") return;
   if (!liRef.value || !ulRef.value) return;
   if (ulRef.value.children.length > 0) noChild.value = false;
 
   root &&
     watch(
-      () => state.value.currentAction,
+      () => state.value!.currentAction,
       () => {
-        if (shouldShow.value) {
-          ulRef.value!.style.display = "none";
-          ulRef.value!.removeAttribute("data-show");
-          shouldShow.value = false;
-        }
+        console.log("current action changed", state.value!.currentAction);
+        ulRef.value!.style.display = "none";
+        ulRef.value!.removeAttribute("data-show");
+        shouldShow.value = false;
       }
     );
 
-  root &&
-    watch(
-      () => state.value.isOpen,
-      (isOpen) => {
-        hide();
-        if (!isOpen && shouldShow.value) {
-          ulRef.value!.removeAttribute("data-show");
-          shouldShow.value = false;
-        }
-      }
-    );
-
-  if (props.type == "group") return;
   const popperInstance = createPopper(
     liRef.value,
     ulRef.value!,
@@ -155,36 +168,43 @@ onMounted(() => {
     //@ts-ignore as it is an internal property
     state.value.__ignoreBlur = true;
 
-    //@ts-ignore
-    if (props.disabled && !props.openHoverMenuWhenDisabled) return;
+    if (
+      //@ts-ignore
+      (props.disabled && !props.openHoverMenuWhenDisabled) ||
+      (noChild.value && root)
+    ) {
+      //@ts-ignore
+      state.value.currentAction = null;
+      return;
+    }
+
     if (!noChild.value) {
       ulRef.value!.style.display = "block";
+      setTimeout(() => {
+        ulRef.value!.setAttribute("data-show", "");
+        shouldShow.value = true;
+        popperInstance.update();
+      }, 0);
     }
+
     if (root) {
-      state.value.currentAction = props;
+      //@ts-ignore as it is an internal property
+      state.value.currentAction = props.label;
     }
-    //hack to get the animation to work
-    //by calling it after the call stack is done
-    setTimeout(() => {
-      ulRef.value!.setAttribute("data-show", "");
-    }, 0);
-    popperInstance.update();
-    shouldShow.value = true;
-    if (!root) return;
-    if (state.value.currentAction === props) return;
-    // state.value.currentAction = props;
   }
 
   function hide() {
     //@ts-ignore as it is an internal property
     state.value.__ignoreBlur = false;
+    shouldShow.value = false;
+
     //need this to refire the blur event
-    state.value.ctxRef!.focus();
+    state.value!.ctxRef!.focus();
     if (root) return;
     ulRef.value!.style.display = "none";
     ulRef.value!.removeAttribute("data-show");
-    if (!root) return;
     shouldShow.value = false;
+    // if (!root) return;
   }
   const showEvents = ["mouseover", "mouseenter"];
   const hideEvents = ["mouseleave"];
@@ -194,6 +214,17 @@ onMounted(() => {
 
   hideEvents.forEach((event) => {
     liRef.value!.addEventListener(event, hide);
+  });
+
+  onUnmounted(() => {
+    showEvents.forEach((event) => {
+      liRef.value!.removeEventListener(event, show);
+    });
+
+    hideEvents.forEach((event) => {
+      liRef.value!.removeEventListener(event, hide);
+    });
+    popperInstance.destroy();
   });
 });
 </script>
@@ -283,14 +314,14 @@ onMounted(() => {
       background: transparent;
     }
 
-    &.root {
+    /* &.root {
       &::after {
         display: none;
       }
       &::before {
         display: none;
       }
-    }
+    } */
 
     .hotkey {
       display: flex;
@@ -384,6 +415,12 @@ onMounted(() => {
     padding: 0.5rem;
     border-radius: 0.5rem;
     min-width: 200px;
+
+    &.overflow {
+      max-height: 75vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
   }
 
   .hover-menu[data-show] {

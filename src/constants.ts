@@ -14,3 +14,5 @@ export const defaultOptions = {
 export const unusableSlotNames = ["Icon", "Label", "Hotkey", "Check"];
 
 export const defaultTheme = "dark";
+
+export const defaultInstanceName = "default";
