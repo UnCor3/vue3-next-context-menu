@@ -35,8 +35,6 @@ const ctxRef = ref<HTMLElement>();
 const instanceId = inject("instanceId", "default");
 const { state } = useContextMenu(instanceId);
 
-console.log("hit ctx animated");
-
 const theme = computed(() => {
   //@ts-ignore
   if (state.value.options.theme === "dark") {

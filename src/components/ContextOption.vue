@@ -21,7 +21,7 @@ const slotNames = Object.keys(instance!.slots);
 
 <template>
   <!-- @vue-expect-error ts thinks it's smart -->
-  <CtxOptions :props="{ type: 'action', ...props }" :root="root">
+  <CtxOptions :props="{ type: 'action', ...props }" :root="!!root">
     <!-- @vue-expect-error -->
     <template
       v-for="name in slotNames.filter((s) =>

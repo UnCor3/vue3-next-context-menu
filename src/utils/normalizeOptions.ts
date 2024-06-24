@@ -5,7 +5,6 @@ import { remToPx } from "@/helpers";
 import { defaultTheme } from "@/constants";
 import { useContextMenu } from "@/store";
 import { logError } from "@/helpers";
-import { isRef } from "vue";
 
 const isElm = (elm: any) =>
   elm instanceof HTMLElement || elm instanceof Element;
@@ -46,10 +45,6 @@ export function normalizeArea(options: Options) {
     const _elm = document.querySelector(options.area) as HTMLElement;
     if (!isElm(_elm)) return logError("Given area is not a valid HTMLElement");
     elm = _elm;
-  } else if (isRef(options.area)) {
-    //todo
-    console.log("yes ref");
-    elm = options.area.value;
   } else if (options.area) {
     if (!isElm(options.area)) {
       return logError("Given area is not a valid HTMLElement");

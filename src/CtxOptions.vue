@@ -45,6 +45,14 @@
   <!-- Group -->
   <template v-else-if="props.type == 'group'">
     <li
+      @mouseover="
+        //@ts-ignore as it is an internal property
+        state.__ignoreBlur = true
+      "
+      @mouseleave="
+        //@ts-ignore as it is an internal property
+        state.__ignoreBlur = false
+      "
       class="group"
       :class="{
         show: props.showLabel,
@@ -134,7 +142,7 @@ const neededClasses = computed(() => ({
 
 const handleClick = () => {
   //@ts-ignore
-  if (props.disabled || !props.init) return;
+  if (props.disabled || !props.init || ulRef.value!.children.length > 0) return;
   //@ts-ignore
   const shouldClose = props.init(props);
   if (!shouldClose) {
@@ -151,7 +159,6 @@ onMounted(() => {
     watch(
       () => state.value!.currentAction,
       () => {
-        console.log("current action changed", state.value!.currentAction);
         ulRef.value!.style.display = "none";
         ulRef.value!.removeAttribute("data-show");
         shouldShow.value = false;
@@ -167,23 +174,24 @@ onMounted(() => {
   function show() {
     //@ts-ignore as it is an internal property
     state.value.__ignoreBlur = true;
-
     if (
       //@ts-ignore
       (props.disabled && !props.openHoverMenuWhenDisabled) ||
       (noChild.value && root)
     ) {
-      //@ts-ignore
-      state.value.currentAction = null;
+      if (root) {
+        //@ts-ignore
+        state.value.currentAction = null;
+      }
       return;
     }
 
     if (!noChild.value) {
       ulRef.value!.style.display = "block";
+      popperInstance.update();
       setTimeout(() => {
         ulRef.value!.setAttribute("data-show", "");
         shouldShow.value = true;
-        popperInstance.update();
       }, 0);
     }
 
@@ -204,6 +212,7 @@ onMounted(() => {
     ulRef.value!.style.display = "none";
     ulRef.value!.removeAttribute("data-show");
     shouldShow.value = false;
+    // popperInstance.update();
     // if (!root) return;
   }
   const showEvents = ["mouseover", "mouseenter"];
@@ -217,14 +226,18 @@ onMounted(() => {
   });
 
   onUnmounted(() => {
-    showEvents.forEach((event) => {
-      liRef.value!.removeEventListener(event, show);
-    });
+    try {
+      showEvents.forEach((event) => {
+        liRef.value!.removeEventListener(event, show);
+      });
 
-    hideEvents.forEach((event) => {
-      liRef.value!.removeEventListener(event, hide);
-    });
-    popperInstance.destroy();
+      hideEvents.forEach((event) => {
+        liRef.value!.removeEventListener(event, hide);
+      });
+      popperInstance.destroy();
+    } catch (error) {
+      //
+    }
   });
 });
 </script>
@@ -337,7 +350,7 @@ onMounted(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-left: 0.3rem;
+      margin-left: 0.5rem;
       opacity: 0;
       &.checked {
         opacity: 1;
@@ -406,11 +419,9 @@ onMounted(() => {
 .vue3-context-hover-menus {
   z-index: 99999999;
   .hover-menu {
-    /* display: none; */
     visibility: hidden;
     opacity: 0;
-    scale: 0.98;
-    transition: scale ease 0.3s, opacity ease 0.3s;
+    transition: opacity ease 0.3s;
     border: rgba(128, 128, 128, 0.4) 1px solid;
     padding: 0.5rem;
     border-radius: 0.5rem;
@@ -424,9 +435,7 @@ onMounted(() => {
   }
 
   .hover-menu[data-show] {
-    /* display: block; */
     visibility: visible;
-    scale: 1;
     opacity: 1;
     z-index: 1;
     position: absolute;

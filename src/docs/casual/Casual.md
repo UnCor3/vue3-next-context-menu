@@ -1,3 +1,7 @@
+- ### Usage
+
+### Simple example
+
 ```ts
 <script lang="ts" setup>
 import { ContextOption, ContextGroup, ContextMenu } from "vue3-context-menu/components";
@@ -17,7 +21,7 @@ const forwardProps = {
   preserveIconSpace: true,
 };
 
-const ActionProps = {
+const actionProps = {
   label: 'Reload',
   init: () => console.log('Test'),
   preserveIconSpace: true,
@@ -32,7 +36,7 @@ const ActionProps = {
       :props="forwardProps"
     />
     <ContextOption
-      :props="ActionProps"
+      :props="actionProps"
     />
   </ContextMenu>
 </template>

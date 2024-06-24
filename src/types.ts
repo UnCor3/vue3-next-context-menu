@@ -146,7 +146,7 @@ export type Options = {
    * can be a string for querySelector or an HTMLElement
    * @default document.body
    */
-  area?: HTMLElement | ReturnType<typeof ref<HTMLElement>> | string;
+  area?: HTMLElement | string;
   /**
    * Popper.js options can be adjusted here, you will also get the current config so you can write on top
    * Without any config this package uses

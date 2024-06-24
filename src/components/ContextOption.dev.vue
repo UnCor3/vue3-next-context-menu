@@ -17,6 +17,13 @@ const depth = parentDepth + 1;
 const instance = getCurrentInstance();
 provide("depth", depth);
 
+//@ts-ignore it cant be a group because this file is ContextOption
+if (!props.init) {
+  logWarn(
+    `You are using an action without an init function, label was ${props.label}. If this was intentional, ignore this warning.`
+  );
+}
+
 const root =
   instance?.parent?.type.__name == "CtxAnimated" ||
   ((inject("root", false) as Boolean) && depth < 2);

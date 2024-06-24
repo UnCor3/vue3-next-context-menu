@@ -3,7 +3,7 @@ const isDev = process.env.NODE_ENV === "development";
 let ContextGroup: typeof import("@/components/ContextGroup.vue").default;
 let ContextOption: typeof import("@/components/ContextOption.vue").default;
 let ContextMenu: typeof import("@/components/ContextMenu.vue").default;
-
+console.log(isDev);
 if (isDev) {
   ContextGroup = require("@/components/ContextGroup.dev.vue");
   ContextOption = require("@/components/ContextOption.dev.vue");

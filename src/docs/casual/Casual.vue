@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ContextOption, ContextMenu } from "@/Components";
-import { ref } from "vue";
-const casualRef = ref<HTMLElement>();
+import Markdown from "../Markdown.vue";
+import md from "./Casual.md?raw";
 
 const backProps = {
   label: "Back",
@@ -23,12 +23,11 @@ const ActionProps = {
 };
 </script>
 <template>
-  <div class="example" ref="casualRef">
-    Here is a simple example of a Context Menu in action. Right click anywhere
-    on the page to see the context menu in action.
+  <div id="usage" class="example casual">
+    <Markdown :md="md" />
   </div>
 
-  <ContextMenu theme="light" :area="casualRef">
+  <ContextMenu theme="light" area=".example.casual">
     <ContextOption :props="backProps" />
     <ContextOption :props="forwardProps" />
     <ContextOption :props="ActionProps" />
