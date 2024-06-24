@@ -4,8 +4,8 @@
 
 ```ts
 <script lang="ts" setup>
-import { ContextOption, ContextGroup, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextGroup, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 
 const backProps = {

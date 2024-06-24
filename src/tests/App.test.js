@@ -17,7 +17,7 @@ import { useContextMenu } from "../store.ts";
 beforeEach(() => {
   // create teleport target
   const el = document.createElement("div");
-  el.className = "vue3-context-hover-menus";
+  el.className = "vue3-next-context-hover-menus";
   document.body.appendChild(el);
 });
 

@@ -12,8 +12,8 @@
   <button @click="destroy">Destroy me</button>
 </template>
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
-import { useContextMenu } from "vue3-context-menu";
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
+import { useContextMenu } from "vue3-next-context-menu";
 import { onMounted, ref } from "vue";
 
 const destroy = ref(() => {});

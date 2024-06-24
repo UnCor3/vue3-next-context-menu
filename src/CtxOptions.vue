@@ -14,7 +14,7 @@
       </template>
     </OptionAttrs>
     <Teleport
-      :to="`.vue3-context-hover-menus[data-instance-id=${instanceId}]`"
+      :to="`.vue3-next-context-hover-menus[data-instance-id=${instanceId}]`"
       v-if="root"
     >
       <ul
@@ -77,7 +77,7 @@
       />
       <slot v-else :name="props.parentSlot" />
       <Teleport
-        :to="`.vue3-context-hover-menus[data-instance-id=${instanceId}]`"
+        :to="`.vue3-next-context-hover-menus[data-instance-id=${instanceId}]`"
         v-if="root"
       >
         <ul
@@ -243,8 +243,8 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-.vue3-context-menu,
-.vue3-context-hover-menus {
+.vue3-next-context-menu,
+.vue3-next-context-hover-menus {
   * {
     margin: 0;
     padding: 0;
@@ -416,7 +416,7 @@ onMounted(() => {
   }
 }
 //todo
-.vue3-context-hover-menus {
+.vue3-next-context-hover-menus {
   z-index: 99999999;
   .hover-menu {
     visibility: hidden;

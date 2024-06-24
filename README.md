@@ -1,4 +1,4 @@
-## vue3-context-menu 📚
+## vue3-next-context-menu 📚
 
 - Compatible with Vue3 and Nuxt 🚀
 - Uses popper.js under the hood 🎈
@@ -22,13 +22,13 @@
 - ### Installation
 
 ```bash
-npm install vue3-context-menu
+npm install vue3-next-context-menu
 ```
 
 or
 
 ```bash
-yarn add vue3-context-menu
+yarn add vue3-next-context-menu
 ```
 - ### Usage
 
@@ -36,8 +36,8 @@ yarn add vue3-context-menu
 
 ```ts
 <script lang="ts" setup>
-import { ContextOption, ContextGroup, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextGroup, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 
 const backProps = {
@@ -89,9 +89,9 @@ const actionProps = {
 </template>
 
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
 import MuteSvg from "@/icons/Mute.svg?raw";
-import "vue3-context-menu/styles.css"
+import "vue3-next-context-menu/styles.css"
 
 const RotateProps = {
   label: "Rotate",
@@ -115,8 +115,8 @@ const RotateProps = {
   </ContextMenu>
 </template>
 <script setup lang="ts">
-import { ContextGroup, ContextOption, ContextMenu } from "vue3-context-menu/Components";
-import "vue3-context-menu/styles.css"
+import { ContextGroup, ContextOption, ContextMenu } from "vue3-next-context-menu/Components";
+import "vue3-next-context-menu/styles.css"
 
 //you can also use templates to pass icons check for template usage down below
 import RewindSvg from "@/assets/Rewind.svg?raw";
@@ -186,8 +186,8 @@ const MuteProps = {
   </ContextMenu>
 </template>
 <script setup lang="ts">
-import { ContextMenu, ContextOption } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextMenu, ContextOption } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 </script>
 ```
@@ -197,8 +197,8 @@ import "vue3-context-menu/styles.css"
 
 ```ts
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 </script>
 
@@ -234,8 +234,8 @@ import "vue3-context-menu/styles.css"
 </template>
 
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 import { ref } from "vue";
 
 
@@ -271,8 +271,8 @@ const props = ref({
 </template>
 
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 
 const ins1 = {
@@ -399,8 +399,8 @@ const ins2 = {
   </ContextMenu>
 </template>
 <script setup lang="ts">
-import { ContextMenu, ContextOption, ContextGroup } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextMenu, ContextOption, ContextGroup } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 import RewindSvg from "@/icons/Rewind.svg?raw";
 import CutSvg from "@/icons/Cut.svg?raw";
 import MuteSvg from "@/icons/Mute.svg?raw";
@@ -420,8 +420,8 @@ import MuteSvg from "@/icons/Mute.svg?raw";
   <button @click="destroy">Destroy me</button>
 </template>
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
-import { useContextMenu } from "vue3-context-menu";
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
+import { useContextMenu } from "vue3-next-context-menu";
 import { onMounted, ref } from "vue";
 
 const destroy = ref(() => {});
@@ -554,8 +554,8 @@ isActive :boolean }` -
 
 ```ts
 <script lang="ts" setup>
-import { ContextOption, ContextGroup, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextGroup, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 
 const backProps = {
@@ -620,13 +620,13 @@ If you want to change the animation, here is the default animation you can overr
 
 ```css
 /* default */
-.vue3-context-hover-menus .hover-menu {
+.vue3-next-context-hover-menus .hover-menu {
   /* initial state */
   opacity: 0;
   transition: opacity ease 0.3s;
 }
 
-.vue3-context-hover-menus .hover-menu[data-show] {
+.vue3-next-context-hover-menus .hover-menu[data-show] {
   /* final state */
   opacity: 1;
 }
@@ -634,12 +634,12 @@ If you want to change the animation, here is the default animation you can overr
 
 ```css
 /* overridden */
-.vue3-context-hover-menus .hover-menu {
+.vue3-next-context-hover-menus .hover-menu {
   opacity: 0 !important;
   transition: opacity ease 2s !important;
 }
 
-.vue3-context-hover-menus .hover-menu[data-show] {
+.vue3-next-context-hover-menus .hover-menu[data-show] {
   opacity: 1 !important;
 }
 ```
@@ -661,9 +661,9 @@ If you want to change the animation, here is the default animation you can overr
 </template>
 
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
 import MuteSvg from "@/icons/Mute.svg?raw";
-import "vue3-context-menu/styles.css"
+import "vue3-next-context-menu/styles.css"
 
 const RotateProps = {
   label: "Rotate",

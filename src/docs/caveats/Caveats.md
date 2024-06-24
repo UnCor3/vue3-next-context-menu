@@ -25,13 +25,13 @@ If you want to change the animation, here is the default animation you can overr
 
 ```css
 /* default */
-.vue3-context-hover-menus .hover-menu {
+.vue3-next-context-hover-menus .hover-menu {
   /* initial state */
   opacity: 0;
   transition: opacity ease 0.3s;
 }
 
-.vue3-context-hover-menus .hover-menu[data-show] {
+.vue3-next-context-hover-menus .hover-menu[data-show] {
   /* final state */
   opacity: 1;
 }
@@ -39,12 +39,12 @@ If you want to change the animation, here is the default animation you can overr
 
 ```css
 /* overridden */
-.vue3-context-hover-menus .hover-menu {
+.vue3-next-context-hover-menus .hover-menu {
   opacity: 0 !important;
   transition: opacity ease 2s !important;
 }
 
-.vue3-context-hover-menus .hover-menu[data-show] {
+.vue3-next-context-hover-menus .hover-menu[data-show] {
   opacity: 1 !important;
 }
 ```

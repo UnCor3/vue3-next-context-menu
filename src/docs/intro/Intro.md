@@ -1,4 +1,4 @@
-## vue3-context-menu 📚
+## vue3-next-context-menu 📚
 
 - Compatible with Vue3 and Nuxt 🚀
 - Uses popper.js under the hood 🎈

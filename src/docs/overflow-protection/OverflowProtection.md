@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
 import MuteSvg from "@/icons/Mute.svg?raw";
-import "vue3-context-menu/styles.css"
+import "vue3-next-context-menu/styles.css"
 
 const RotateProps = {
   label: "Rotate",

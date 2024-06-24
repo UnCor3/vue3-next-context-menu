@@ -1,10 +1,14 @@
 <template>
   <div
-    class="vue3-context-hover-menus"
+    class="vue3-next-context-hover-menus"
     :data-instance-id="instanceId"
     :class="theme"
   />
-  <div class="vue3-context-menu" :class="theme" :data-instance-id="instanceId">
+  <div
+    class="vue3-next-context-menu"
+    :class="theme"
+    :data-instance-id="instanceId"
+  >
     <ul
       class="context-menu"
       tabindex="-1"
@@ -55,7 +59,7 @@ onMounted(() => {
     if (!state.value!.__ignoreBlur) {
       state.value!.isOpen = false;
       document
-        .querySelectorAll(".vue3-context-hover-menus > [data-after-root]")
+        .querySelectorAll(".vue3-next-context-hover-menus > [data-after-root]")
         .forEach((el) => {
           el.removeAttribute("data-show");
         });
@@ -78,7 +82,7 @@ onMounted(() => {
   box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.5);
 }
 
-.vue3-context-menu {
+.vue3-next-context-menu {
   &.light {
     .context-menu {
       background-color: white;
@@ -137,7 +141,7 @@ onMounted(() => {
   }
 }
 
-.vue3-context-hover-menus {
+.vue3-next-context-hover-menus {
   &.dark {
     .hover-menu {
       background-color: black;

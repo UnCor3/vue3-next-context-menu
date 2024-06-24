@@ -4,8 +4,8 @@
 
 ```ts
 <script setup lang="ts">
-import { ContextOption, ContextMenu } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextOption, ContextMenu } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 
 </script>
 

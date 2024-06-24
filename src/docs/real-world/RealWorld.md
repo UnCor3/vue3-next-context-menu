@@ -107,8 +107,8 @@
   </ContextMenu>
 </template>
 <script setup lang="ts">
-import { ContextMenu, ContextOption, ContextGroup } from "vue3-context-menu/components";
-import "vue3-context-menu/styles.css"
+import { ContextMenu, ContextOption, ContextGroup } from "vue3-next-context-menu/components";
+import "vue3-next-context-menu/styles.css"
 import RewindSvg from "@/icons/Rewind.svg?raw";
 import CutSvg from "@/icons/Cut.svg?raw";
 import MuteSvg from "@/icons/Mute.svg?raw";

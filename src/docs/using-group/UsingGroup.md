@@ -13,8 +13,8 @@
   </ContextMenu>
 </template>
 <script setup lang="ts">
-import { ContextGroup, ContextOption, ContextMenu } from "vue3-context-menu/Components";
-import "vue3-context-menu/styles.css"
+import { ContextGroup, ContextOption, ContextMenu } from "vue3-next-context-menu/Components";
+import "vue3-next-context-menu/styles.css"
 
 //you can also use templates to pass icons check for template usage down below
 import RewindSvg from "@/assets/Rewind.svg?raw";

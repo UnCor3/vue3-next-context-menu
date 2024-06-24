@@ -1,9 +1,10 @@
 {
-  "name": "vue3-context-menu",
+  "name": "vue3-next-context-menu",
   "author": {
     "name": "Uncore",
     "email": "contactuncor3@gmail.com"
   },
+  "license": "MIT",
   "version": "0.0.0",
   "type": "module",
   "exports": {

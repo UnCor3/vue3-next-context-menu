@@ -67,7 +67,7 @@ export class ContextApiHandler {
       }
     }
     const elm = document.querySelector(
-      `.vue3-context-menu[data-instance-id="${this.state.value.instanceId}"] [data-label="${label}"]`
+      `.vue3-next-context-menu[data-instance-id="${this.state.value.instanceId}"] [data-label="${label}"]`
     );
     elm?.classList.add("highlight");
     setTimeout(() => {
