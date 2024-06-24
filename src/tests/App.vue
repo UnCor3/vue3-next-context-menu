@@ -4,8 +4,8 @@ import {
   ContextOption,
   ContextGroup,
   ContextMenu,
-} from "../../dist/Components.es.js";
-import "../../dist/styles.css";
+} from "vue3-next-context-menu";
+import "vue3-next-context-menu/styles.css";
 import RewindSvg from "@/icons/Rewind.svg?raw";
 import CutSvg from "@/icons/Cut.svg?raw";
 import MuteSvg from "@/icons/Mute.svg?raw";

@@ -27,3 +27,4 @@ dist-ssr
 # Vite
 
 vite.config.ts.timestamp*
+web/*

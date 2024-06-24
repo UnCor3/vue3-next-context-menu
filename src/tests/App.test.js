@@ -12,7 +12,6 @@ import {
 } from "vitest";
 
 import App from "./App.vue";
-import { useContextMenu } from "../store.ts";
 
 beforeEach(() => {
   // create teleport target
