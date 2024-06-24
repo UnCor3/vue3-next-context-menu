@@ -27,7 +27,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm install
-      - run: npm build:site
+      - run: npm run build:site
       - run: npm test
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
