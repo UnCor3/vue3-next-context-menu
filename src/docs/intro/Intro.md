@@ -16,6 +16,8 @@
 - [Using in Nuxt](#using-in-nuxt)
 - [Caveats](#caveats)
 
+## Check live demo [here](https://uncore.me/vue3-next-context-menu/) 🚀
+
 #### This library is especially made for web apps similar to canva,figma,codesandbox,codepen,excalidraw etc.
 
 ## &nbsp;

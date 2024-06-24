@@ -5,7 +5,7 @@
     "email": "contactuncor3@gmail.com"
   },
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "exports": {
     ".": {
@@ -55,5 +55,10 @@
     "vite-plugin-require": "^1.2.14",
     "vitest": "^1.6.0",
     "vue-tsc": "^2.0.6"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UnCor3/vue3-next-context-menu"
+  },
+  "homepage": "https://uncore.me/vue3-next-context-menu/"
 }
